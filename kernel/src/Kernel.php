@@ -8,11 +8,21 @@ final class Kernel
 {
     private array $config;
     private Router $router;
+    private ModuleLoader $moduleLoader;
+    private PermissionGate $permissionGate;
 
     public function __construct(array $config)
     {
         $this->config = $config;
         $this->router = new Router($config);
+
+        $this->permissionGate = PermissionGate::getInstance();
+        $this->permissionGate->registerDefaults();
+
+        $this->moduleLoader = new ModuleLoader(
+            dirname(__DIR__, 2) . '/modules',
+            $this->router
+        );
     }
 
     public function handle(): void
@@ -33,6 +43,16 @@ final class Kernel
     public function getRouter(): Router
     {
         return $this->router;
+    }
+
+    public function getModuleLoader(): ModuleLoader
+    {
+        return $this->moduleLoader;
+    }
+
+    public function getPermissionGate(): PermissionGate
+    {
+        return $this->permissionGate;
     }
 
     private function sendResponse(array $response): void
