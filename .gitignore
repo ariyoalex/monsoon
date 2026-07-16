@@ -2,6 +2,9 @@
 Monsoon_CMS_PRD.md
 Reference.md
 
+# DDEV local development environment
+.ddev/
+
 # Environment
 .env
 .env.local
