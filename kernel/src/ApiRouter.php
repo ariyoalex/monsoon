@@ -260,5 +260,252 @@ final class ApiRouter
 
             return Response::json(['message' => 'Setting updated.']);
         });
+
+        $router->addRoute('POST', '/api/v1/settings', function () use ($db) {
+            $data = (new Request())->json();
+            $scope = $data['scope'] ?? 'global';
+            $key = $data['setting_key'] ?? '';
+            $value = $data['setting_value'] ?? '';
+
+            if ($key === '') {
+                return Response::error(422, 'setting_key is required.');
+            }
+
+            $id = Uuid::v4();
+            $now = date('Y-m-d H:i:s');
+
+            $stmt = $db->prepare('INSERT INTO settings (id, scope, setting_key, setting_value, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)');
+            $stmt->bind_param('ssssss', $id, $scope, $key, $value, $now, $now);
+            $stmt->execute();
+            $stmt->close();
+
+            return Response::json(['data' => ['id' => $id, 'scope' => $scope, 'setting_key' => $key, 'setting_value' => $value]], 201);
+        });
+
+        // ==================== MEDIA ====================
+
+        $router->addRoute('POST', '/api/v1/media', function () use ($db) {
+            $auth = Auth::getInstance();
+            $userId = $auth->getUserId();
+            if ($userId === null) {
+                return Response::error(401, 'Authentication required.');
+            }
+
+            $altText = $_POST['alt_text'] ?? '';
+            if ($altText === '') {
+                return Response::error(422, 'Alt text is required for all uploads.');
+            }
+
+            if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+                $errorCode = $_FILES['file']['error'] ?? -1;
+                return Response::error(422, 'File upload failed. Error code: ' . $errorCode);
+            }
+
+            $file = $_FILES['file'];
+            $originalName = $file['name'];
+            $mimeType = $file['type'];
+            $fileSize = $file['size'];
+            $tmpPath = $file['tmp_name'];
+
+            if ($fileSize > 10 * 1024 * 1024) {
+                return Response::error(422, 'File size must be under 10MB.');
+            }
+
+            $allowedMimes = [
+                'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+                'video/mp4', 'video/webm',
+                'audio/mpeg', 'audio/wav',
+                'application/pdf',
+                'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            ];
+            if (!in_array($mimeType, $allowedMimes, true)) {
+                return Response::error(422, 'File type not allowed.');
+            }
+
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'mp4', 'webm', 'mp3', 'wav', 'pdf', 'doc', 'docx'];
+            if (!in_array($ext, $allowedExts, true)) {
+                return Response::error(422, 'File extension not allowed.');
+            }
+
+            $id = Uuid::v4();
+            $safeName = $id . '.' . $ext;
+            $uploadDir = dirname(__DIR__, 2) . '/public/uploads';
+
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+
+            $destPath = $uploadDir . '/' . $safeName;
+
+            if (strpos($originalName, '..') !== false || strpos($originalName, '/') !== false) {
+                return Response::error(422, 'Invalid file name.');
+            }
+
+            if (!move_uploaded_file($tmpPath, $destPath)) {
+                return Response::error(500, 'Failed to save uploaded file.');
+            }
+
+            $filePath = '/uploads/' . $safeName;
+            $now = date('Y-m-d H:i:s');
+
+            $stmt = $db->prepare(
+                'INSERT INTO media (id, file_path, file_name, mime_type, file_size, alt_text, uploader_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            );
+            $stmt->bind_param('ssssisss', $id, $filePath, $originalName, $mimeType, $fileSize, $altText, $userId, $now);
+            $stmt->execute();
+            $stmt->close();
+
+            return Response::json([
+                'data' => [
+                    'id' => $id,
+                    'file_path' => $filePath,
+                    'file_name' => $originalName,
+                    'mime_type' => $mimeType,
+                    'file_size' => $fileSize,
+                    'alt_text' => $altText,
+                ],
+            ], 201);
+        });
+
+        $router->addRoute('GET', '/api/v1/media', function () use ($db) {
+            $page = max((int)($_GET['page'] ?? 1), 1);
+            $perPage = min(max((int)($_GET['per_page'] ?? 20), 1), 100);
+            $offset = ($page - 1) * $perPage;
+
+            $stmt = $db->prepare('SELECT * FROM media ORDER BY created_at DESC LIMIT ? OFFSET ?');
+            $stmt->bind_param('ii', $perPage, $offset);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $items = $result->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            $countResult = $db->query('SELECT COUNT(*) AS total FROM media');
+            $total = (int)($countResult->fetch_assoc()['total'] ?? 0);
+
+            return Response::json([
+                'data' => $items,
+                'meta' => ['total' => $total, 'page' => $page, 'per_page' => $perPage],
+            ]);
+        });
+
+        $router->addRoute('DELETE', '/api/v1/media/{id}', function (array $params) use ($db) {
+            $stmt = $db->prepare('SELECT file_path FROM media WHERE id = ? LIMIT 1');
+            $stmt->bind_param('s', $params['id']);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $media = $result->fetch_assoc();
+            $stmt->close();
+
+            if ($media === null) {
+                return Response::error(404, 'Media not found.');
+            }
+
+            $filePath = dirname(__DIR__, 2) . '/public' . $media['file_path'];
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+
+            $stmt = $db->prepare('DELETE FROM media WHERE id = ?');
+            $stmt->bind_param('s', $params['id']);
+            $stmt->execute();
+            $stmt->close();
+
+            return Response::empty(204);
+        });
+
+        // ==================== ROLES ====================
+
+        $router->addRoute('GET', '/api/v1/roles', function () use ($db) {
+            $stmt = $db->prepare('SELECT * FROM roles ORDER BY name ASC');
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $roles = $result->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+
+            foreach ($roles as &$role) {
+                $role['capabilities'] = json_decode($role['capabilities'], true) ?? [];
+            }
+
+            return Response::json(['data' => $roles]);
+        });
+
+        $router->addRoute('POST', '/api/v1/roles', function () use ($db) {
+            $data = (new Request())->json();
+            $name = $data['name'] ?? '';
+            $capabilities = $data['capabilities'] ?? [];
+
+            if ($name === '') {
+                return Response::error(422, 'Role name is required.');
+            }
+
+            $id = Uuid::v4();
+            $capabilitiesJson = json_encode($capabilities);
+            $now = date('Y-m-d H:i:s');
+
+            $stmt = $db->prepare('INSERT INTO roles (id, name, capabilities, created_at, updated_at) VALUES (?, ?, ?, ?, ?)');
+            $stmt->bind_param('sssss', $id, $name, $capabilitiesJson, $now, $now);
+            $stmt->execute();
+            $stmt->close();
+
+            return Response::json(['data' => ['id' => $id, 'name' => $name, 'capabilities' => $capabilities]], 201);
+        });
+
+        $router->addRoute('PUT', '/api/v1/roles/{id}', function (array $params) use ($db) {
+            $data = (new Request())->json();
+            $capabilities = $data['capabilities'] ?? null;
+            $name = $data['name'] ?? null;
+
+            $fields = [];
+            $types = '';
+            $values = [];
+
+            if ($name !== null) {
+                $fields[] = 'name = ?';
+                $types .= 's';
+                $values[] = $name;
+            }
+
+            if ($capabilities !== null) {
+                $capabilitiesJson = json_encode($capabilities);
+                $fields[] = 'capabilities = ?';
+                $types .= 's';
+                $values[] = $capabilitiesJson;
+            }
+
+            if (empty($fields)) {
+                return Response::error(422, 'No fields to update.');
+            }
+
+            $now = date('Y-m-d H:i:s');
+            $fields[] = 'updated_at = ?';
+            $types .= 's';
+            $values[] = $now;
+
+            $values[] = $params['id'];
+            $types .= 's';
+
+            $sql = 'UPDATE roles SET ' . implode(', ', $fields) . ' WHERE id = ?';
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param($types, ...$values);
+            $stmt->execute();
+            $stmt->close();
+
+            return Response::json(['message' => 'Role updated.']);
+        });
+
+        $router->addRoute('DELETE', '/api/v1/roles/{id}', function (array $params) use ($db) {
+            $stmt = $db->prepare('DELETE FROM roles WHERE id = ?');
+            $stmt->bind_param('s', $params['id']);
+            $stmt->execute();
+            $affected = $stmt->affected_rows;
+            $stmt->close();
+
+            if ($affected === 0) {
+                return Response::error(404, 'Role not found.');
+            }
+
+            return Response::empty(204);
+        });
     }
 }
