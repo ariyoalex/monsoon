@@ -385,7 +385,6 @@ HTML;
         $isEdit = $item !== null;
         $title = htmlspecialchars($item['title'] ?? '', ENT_QUOTES, 'UTF-8');
         $slug = htmlspecialchars($item['slug'] ?? '', ENT_QUOTES, 'UTF-8');
-        $body = htmlspecialchars($item['body'] ?? '', ENT_QUOTES, 'UTF-8');
         $status = $item['status'] ?? 'draft';
         $type = $item['type'] ?? 'page';
         $id = $item['id'] ?? '';
@@ -396,6 +395,10 @@ HTML;
         $archivedSelected = $status === 'archived' ? ' selected' : '';
         $pageSelected = $type === 'page' ? ' selected' : '';
         $postSelected = $type === 'post' ? ' selected' : '';
+        $bodyJson = $item['body'] ?? '[]';
+        if ($bodyJson === '' || $bodyJson === null) {
+            $bodyJson = '[]';
+        }
 
         return <<<HTML
 <!DOCTYPE html>
@@ -436,7 +439,10 @@ body { background: #F4F6FA; }
 <div class="content flex-grow-1">
 <div class="d-flex justify-content-between align-items-center mb-4">
 <h1 class="h3 mb-0">{$pageTitle}</h1>
+<div class="d-flex align-items-center gap-3">
+<span id="save-status"></span>
 <a href="/manage/content" class="btn btn-outline-secondary" aria-label="Back to content listing">Back to Content</a>
+</div>
 </div>
 <form id="content-form">
 <input type="hidden" id="content-id" value="{$id}">
@@ -456,8 +462,8 @@ body { background: #F4F6FA; }
 </div>
 </div>
 <div class="mb-3">
-<label for="body" class="form-label fw-semibold">Body</label>
-<textarea class="form-control" id="body" name="body" rows="15" placeholder="Write your content here...">{$body}</textarea>
+<label class="form-label fw-semibold">Content</label>
+<div id="block-editor-canvas"></div>
 </div>
 </div>
 </div>
@@ -495,7 +501,22 @@ body { background: #F4F6FA; }
 <div class="toast-container" id="toast-container" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/manage.js"></script>
+<script src="/block-registry.js"></script>
+<script src="/block-editor.js"></script>
+<script src="/block-toolbar.js"></script>
 <script>
+const INITIAL_BLOCKS = {$bodyJson};
+document.addEventListener('DOMContentLoaded', function() {
+    BlockEditor.init('block-editor-canvas');
+    BlockToolbar.init();
+
+    if (Array.isArray(INITIAL_BLOCKS) && INITIAL_BLOCKS.length > 0) {
+        BlockEditor.setBlocks(INITIAL_BLOCKS);
+    } else {
+        BlockEditor.addBlock('paragraph');
+    }
+});
+
 document.getElementById('content-form').addEventListener('submit', function(e) {
     e.preventDefault();
     if (!Monsoon.validateForm(this)) return;
@@ -524,7 +545,8 @@ function saveContent() {
     const data = {
         title: document.getElementById('title').value,
         slug: document.getElementById('slug').value,
-        body: document.getElementById('body').value,
+        content: BlockEditor.getJSON(),
+        body: BlockEditor.getJSON(),
         status: document.getElementById('status').value,
         type: document.getElementById('type').value,
     };
