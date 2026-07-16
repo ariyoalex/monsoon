@@ -60,10 +60,6 @@ ddev start
 # Or use your own PHP/MySQL setup
 ```
 
-## Roadmap
-
-See [`tasks-phases.md`](tasks-phases.md) for the full phased plan from foundation to production launch.
-
 ## License
 
 GNU General Public License v3.0 — see [LICENSE](LICENSE).
