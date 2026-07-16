@@ -23,10 +23,23 @@ final class Kernel
             dirname(__DIR__, 2) . '/modules',
             $this->router
         );
+
+        AdminRoutes::register($this->router, $this->config);
     }
 
     public function handle(): void
     {
+        $dbHost = $this->config['DB_HOST'] ?? '';
+        if ($dbHost !== '') {
+            try {
+                $db = Database::getInstance();
+                $db->connect($this->config);
+                $auth = Auth::getInstance();
+                $auth->setDatabase($db->getConnection());
+            } catch (\Throwable $e) {
+            }
+        }
+
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
 
