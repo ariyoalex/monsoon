@@ -1,0 +1,40 @@
+# Sensitive planning documents (not for public repo)
+Monsoon_CMS_PRD.md
+Reference.md
+
+# Environment
+.env
+.env.local
+.env.production
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.nfs*
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# PHP
+vendor/
+composer.lock
+*.cache
+
+# Logs
+*.log
+/var/log/
+
+# Uploads (user-generated content, not source)
+/public/uploads/
+/public/storage/
+
+# Temp
+/tmp/
+/temp/
