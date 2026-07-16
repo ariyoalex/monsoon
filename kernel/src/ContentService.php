@@ -109,7 +109,13 @@ final class ContentService
             $limit = "LIMIT {$limitVal}";
         }
 
-        $sql = "SELECT * FROM content_items {$where} ORDER BY {$orderBy} {$limit}";
+        $offset = '';
+        if (!empty($params['offset'])) {
+            $offsetVal = (int)$params['offset'];
+            $offset = "OFFSET {$offsetVal}";
+        }
+
+        $sql = "SELECT * FROM content_items {$where} ORDER BY {$orderBy} {$limit} {$offset}";
 
         $stmt = $this->db->prepare($sql);
 

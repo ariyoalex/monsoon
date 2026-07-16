@@ -8,9 +8,12 @@ use Monsoon\Kernel\Config;
 use Monsoon\Kernel\ErrorHandler;
 use Monsoon\Kernel\Kernel;
 use Monsoon\Kernel\Router;
+use Monsoon\Kernel\Response;
 use Monsoon\Kernel\Uuid;
 use Monsoon\Kernel\ModuleManifest;
 use Monsoon\Kernel\PermissionGate;
+use Monsoon\Kernel\Request;
+use Monsoon\Kernel\CsrfMiddleware;
 use PHPUnit\Framework\TestCase;
 
 final class KernelTest extends TestCase
@@ -49,13 +52,19 @@ final class KernelTest extends TestCase
         $this->assertTrue($gate->hasCapability('content.read'));
     }
 
+    public function test_kernel_has_middleware_pipeline(): void
+    {
+        $kernel = new Kernel($this->config);
+        $this->assertInstanceOf(\Monsoon\Kernel\MiddlewarePipeline::class, $kernel->getMiddlewarePipeline());
+    }
+
     public function test_router_returns_404_for_unknown_route(): void
     {
         $router = new Router($this->config);
         $response = $router->dispatch('GET', '/nonexistent');
 
-        $this->assertIsArray($response);
-        $this->assertSame(404, $response['status']);
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertSame(404, $response->status());
     }
 
     public function test_router_matches_registered_route(): void
@@ -67,8 +76,9 @@ final class KernelTest extends TestCase
         ]);
 
         $response = $router->dispatch('GET', '/test');
-        $this->assertSame(200, $response['status']);
-        $this->assertSame('ok', $response['body']);
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertSame(200, $response->status());
+        $this->assertSame('ok', $response->body());
     }
 
     public function test_router_extracts_slug_parameter(): void
@@ -80,7 +90,7 @@ final class KernelTest extends TestCase
         ]);
 
         $response = $router->dispatch('GET', '/hello-world');
-        $this->assertSame('hello-world', $response['body']);
+        $this->assertSame('hello-world', $response->body());
     }
 
     public function test_router_cleans_uri(): void
@@ -92,7 +102,54 @@ final class KernelTest extends TestCase
         ]);
 
         $response = $router->dispatch('GET', '/page/');
-        $this->assertSame(200, $response['status']);
+        $this->assertSame(200, $response->status());
+    }
+
+    public function test_response_json_factory(): void
+    {
+        $response = Response::json(['key' => 'value']);
+        $this->assertSame(200, $response->status());
+        $this->assertStringContainsString('application/json', $response->headers()['Content-Type']);
+        $this->assertStringContainsString('"key":"value"', $response->body());
+    }
+
+    public function test_response_error_factory(): void
+    {
+        $response = Response::error(404, 'Not found');
+        $this->assertSame(404, $response->status());
+        $this->assertStringContainsString('Not found', $response->body());
+    }
+
+    public function test_response_redirect_factory(): void
+    {
+        $response = Response::redirect('/login');
+        $this->assertSame(302, $response->status());
+        $this->assertSame('/login', $response->headers()['Location']);
+    }
+
+    public function test_response_empty_factory(): void
+    {
+        $response = Response::empty();
+        $this->assertSame(204, $response->status());
+        $this->assertSame('', $response->body());
+    }
+
+    public function test_response_immutable_with_header(): void
+    {
+        $original = Response::html('test');
+        $modified = $original->withHeader('X-Custom', 'value');
+
+        $this->assertNull($original->headers()['X-Custom'] ?? null);
+        $this->assertSame('value', $modified->headers()['X-Custom']);
+    }
+
+    public function test_response_immutable_with_status(): void
+    {
+        $original = Response::html('test');
+        $modified = $original->withStatus(418);
+
+        $this->assertSame(200, $original->status());
+        $this->assertSame(418, $modified->status());
     }
 
     public function test_uuid_generates_valid_v4(): void
@@ -171,6 +228,28 @@ final class KernelTest extends TestCase
         $gate = PermissionGate::getInstance();
         $gate->declareModuleScope('bad-module', ['content.read']);
         $gate->assert('bad-module', 'settings.write');
+    }
+
+    public function test_csrf_middleware_skips_api_routes(): void
+    {
+        $middleware = new CsrfMiddleware();
+        $request = new Request();
+        $called = false;
+
+        // Simulate API request by setting REQUEST_URI
+        $_SERVER['REQUEST_URI'] = '/api/v1/content';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+
+        $request = new Request();
+        $result = $middleware->handle($request, function (Request $req) use (&$called) {
+            $called = true;
+            return Response::html('ok');
+        });
+
+        $this->assertTrue($called);
+        $this->assertSame(200, $result->status());
+
+        unset($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
     }
 
     public function test_error_handler_registers(): void

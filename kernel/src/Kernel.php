@@ -10,11 +10,17 @@ final class Kernel
     private Router $router;
     private ModuleLoader $moduleLoader;
     private PermissionGate $permissionGate;
+    private MiddlewarePipeline $middlewarePipeline;
 
     public function __construct(array $config)
     {
         $this->config = $config;
         $this->router = new Router($config);
+
+        $this->middlewarePipeline = new MiddlewarePipeline();
+        $this->middlewarePipeline->pipe(new CsrfMiddleware());
+        $this->middlewarePipeline->pipe(new AuthMiddleware());
+        $this->router->setMiddleware($this->middlewarePipeline);
 
         $this->permissionGate = PermissionGate::getInstance();
         $this->permissionGate->registerDefaults();
@@ -29,6 +35,8 @@ final class Kernel
 
     public function handle(): void
     {
+        $db = null;
+
         $dbHost = $this->config['DB_HOST'] ?? '';
         if ($dbHost !== '') {
             try {
@@ -37,15 +45,19 @@ final class Kernel
                 $auth = Auth::getInstance();
                 $auth->setDatabase($db->getConnection());
             } catch (\Throwable $e) {
+                $db = null;
             }
+        }
+
+        if ($db !== null) {
+            ApiRouter::register($this->router, $db->getConnection());
         }
 
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
 
         $response = $this->router->dispatch($method, $uri);
-
-        $this->sendResponse($response);
+        $response->send();
     }
 
     public function getConfig(): array
@@ -68,22 +80,8 @@ final class Kernel
         return $this->permissionGate;
     }
 
-    private function sendResponse(array $response): void
+    public function getMiddlewarePipeline(): MiddlewarePipeline
     {
-        $status = $response['status'] ?? 200;
-        $headers = $response['headers'] ?? [];
-        $body = $response['body'] ?? '';
-
-        http_response_code($status);
-
-        foreach ($headers as $name => $value) {
-            header("$name: $value");
-        }
-
-        if (!isset($headers['Content-Type'])) {
-            header('Content-Type: text/html; charset=utf-8');
-        }
-
-        echo $body;
+        return $this->middlewarePipeline;
     }
 }

@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace Monsoon\Kernel;
 
-use RuntimeException;
-
 final class Router
 {
     private array $config;
     private array $routes = [];
+    private ?MiddlewarePipeline $middleware = null;
 
     public function __construct(array $config)
     {
         $this->config = $config;
+    }
+
+    public function setMiddleware(MiddlewarePipeline $pipeline): void
+    {
+        $this->middleware = $pipeline;
     }
 
     public function addRoute(string $method, string $pattern, callable $handler): void
@@ -25,7 +29,7 @@ final class Router
         ];
     }
 
-    public function dispatch(string $method, string $uri): mixed
+    public function dispatch(string $method, string $uri): Response
     {
         $method = strtoupper($method);
         $uri = $this->cleanUri($uri);
@@ -40,14 +44,38 @@ final class Router
             if (preg_match($regex, $uri, $matches)) {
                 $params = array_filter($matches, fn ($key) => is_string($key), ARRAY_FILTER_USE_KEY);
 
-                return call_user_func($route['handler'], $params);
+                $handler = $route['handler'];
+
+                if ($this->middleware !== null) {
+                    $request = new Request();
+                    $wrappedHandler = function (Request $request) use ($handler, $params): Response {
+                        $result = call_user_func($handler, $params);
+                        if ($result instanceof Response) {
+                            return $result;
+                        }
+                        return new Response(
+                            $result['status'] ?? 200,
+                            $result['headers'] ?? [],
+                            $result['body'] ?? ''
+                        );
+                    };
+                    return $this->middleware->run($request, $wrappedHandler);
+                }
+
+                $result = call_user_func($handler, $params);
+                if ($result instanceof Response) {
+                    return $result;
+                }
+                return new Response(
+                    $result['status'] ?? 200,
+                    $result['headers'] ?? [],
+                    $result['body'] ?? ''
+                );
             }
         }
 
-        return [
-            'status' => 404,
-            'headers' => ['Content-Type' => 'text/html; charset=utf-8'],
-            'body' => '<!DOCTYPE html>
+        return Response::html(
+            '<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -68,7 +96,8 @@ final class Router
 </div>
 </body>
 </html>',
-        ];
+            404
+        );
     }
 
     private function cleanUri(string $uri): string
@@ -88,7 +117,7 @@ final class Router
     private function patternToRegex(string $pattern): string
     {
         $regex = preg_replace('/\{slug\}/', '([a-z0-9-]+)', $pattern);
-        $regex = preg_replace('/\{id\}/', '([a-f0-9-]{36})', $regex);
+        $regex = preg_replace('/\{([a-zA-Z]+)\}/', '([a-f0-9-]{36})', $regex);
 
         return '/^' . str_replace('/', '\/', $regex) . '$/';
     }
