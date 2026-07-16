@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<ruleset name="Monsoon">
+    <description>Monsoon CMS coding standards</description>
+
+    <file>kernel/</file>
+    <file>public/index.php</file>
+    <file>tests/</file>
+
+    <rule ref="PSR12">
+        <exclude name="PSR1.Files.SideEffects"/>
+    </rule>
+
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property name="forbiddenFunctions" type="array">
+                <element key="var_dump" value="null"/>
+                <element key="print_r" value="null"/>
+                <element key="dd" value="null"/>
+                <element key="die" value="null"/>
+                <element key="exit" value="null"/>
+            </property>
+        </properties>
+    </rule>
+
+    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility"/>
+</ruleset>

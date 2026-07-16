@@ -30,6 +30,8 @@ Thumbs.db
 vendor/
 composer.lock
 *.cache
+.phpunit.cache/
+.phpstan-cache/
 
 # Logs
 *.log
