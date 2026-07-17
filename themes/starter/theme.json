@@ -1,0 +1,36 @@
+{
+    "name": "Starter",
+    "version": "1.0.0",
+    "description": "Clean, responsive starter theme for Monsoon CMS",
+    "author": "Monsoon",
+    "supports": {
+        "title": true,
+        "description": true,
+        "logo": true,
+        "menus": ["primary", "footer"],
+        "widgetAreas": ["sidebar", "footer"],
+        "blockTypes": ["paragraph", "heading", "image", "list", "quote", "embed", "separator", "button"],
+        "customColors": true,
+        "customTypography": true
+    },
+    "templates": {
+        "front-page": "front-page.php",
+        "page": "page.php",
+        "single": "single.php",
+        "archive": "archive.php",
+        "search": "search.php",
+        "404": "404.php",
+        "index": "index.php"
+    },
+    "assets": {
+        "css": ["style.css"],
+        "js": ["theme.js"]
+    },
+    "settings": {
+        "primaryColor": "#1034A6",
+        "sidebarColor": "#1A1A1A",
+        "backgroundColor": "#F4F6FA",
+        "fontBody": "Graphik",
+        "fontHeading": "Means"
+    }
+}

@@ -119,6 +119,108 @@ function _blockUuid() {
 }
 
 // ---------------------------------------------------------------------------
+// Image block CSS (injected once)
+// ---------------------------------------------------------------------------
+(function _injectImageBlockStyles() {
+    if (document.getElementById('image-block-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'image-block-styles';
+    style.textContent = `
+        .image-block-placeholder { border: 2px dashed #dee2e6; border-radius: 8px; padding: 32px; text-align: center; cursor: pointer; transition: border-color 0.2s; }
+        .image-block-placeholder:hover { border-color: #1034A6; }
+        .image-block-placeholder .placeholder-icon { font-size: 2rem; margin-bottom: 8px; }
+        .image-block-preview { position: relative; }
+        .image-block-preview img { width: 100%; }
+        .media-picker-item:hover { border-color: #1034A6 !important; }
+        .media-picker-item.selected { border-color: #1034A6 !important; background: #f0f4ff; }
+    `;
+    document.head.appendChild(style);
+})();
+
+// ---------------------------------------------------------------------------
+// Media Library Picker
+// ---------------------------------------------------------------------------
+function openMediaPicker(onSelect) {
+    const overlay = document.createElement('div');
+    overlay.className = 'media-picker-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;';
+
+    overlay.innerHTML = `
+        <div class="media-picker-modal" style="background:#fff;border-radius:12px;width:90vw;max-width:800px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="padding:16px;border-bottom:1px solid #dee2e6;display:flex;justify-content:space-between;align-items:center;">
+                <h3 style="margin:0;font-size:1.1rem;">Select Media</h3>
+                <button class="media-picker-close" style="border:none;background:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+            </div>
+            <div class="media-picker-grid" style="flex:1;overflow-y:auto;padding:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;">
+                <div style="text-align:center;padding:32px;color:#6c757d;">Loading media...</div>
+            </div>
+            <div style="padding:12px 16px;border-top:1px solid #dee2e6;text-align:right;">
+                <input type="file" class="media-picker-file-input" accept="image/*" style="display:none;">
+                <button class="media-picker-upload-btn" style="padding:6px 16px;border:1px solid #dee2e6;border-radius:6px;background:#fff;cursor:pointer;font-size:0.875rem;">Upload New</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const grid = overlay.querySelector('.media-picker-grid');
+    const fileInput = overlay.querySelector('.media-picker-file-input');
+
+    function close() { overlay.remove(); }
+
+    overlay.querySelector('.media-picker-close').addEventListener('click', close);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) close();
+    });
+
+    async function loadMedia() {
+        try {
+            const res = await fetch('/api/v1/media');
+            const items = await res.json();
+            renderGrid(items);
+        } catch (err) {
+            grid.innerHTML = '<div style="text-align:center;padding:32px;color:#dc3545;">Failed to load media.</div>';
+        }
+    }
+
+    function renderGrid(items) {
+        if (!items.length) {
+            grid.innerHTML = '<div style="text-align:center;padding:32px;color:#6c757d;">No media files yet. Upload one!</div>';
+            return;
+        }
+        grid.innerHTML = items.map(item => `
+            <div class="media-picker-item" data-id="${item.id}" data-url="${item.url}" style="cursor:pointer;border:2px solid transparent;border-radius:6px;overflow:hidden;transition:border-color 0.15s;">
+                <img src="${item.url}" alt="${item.alt_text || ''}" style="width:100%;height:80px;object-fit:cover;display:block;background:#f4f6fa;">
+                <div style="padding:4px 6px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.filename}</div>
+            </div>
+        `).join('');
+
+        grid.querySelectorAll('.media-picker-item').forEach(el => {
+            el.addEventListener('click', () => {
+                onSelect({ id: el.dataset.id, url: el.dataset.url });
+                close();
+            });
+        });
+    }
+
+    overlay.querySelector('.media-picker-upload-btn').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            const res = await fetch('/api/v1/media', { method: 'POST', body: formData });
+            if (res.ok) loadMedia();
+        } catch (err) {
+            console.error('Upload failed:', err);
+        }
+    });
+
+    loadMedia();
+}
+
+// ---------------------------------------------------------------------------
 // 1. Paragraph
 // ---------------------------------------------------------------------------
 BlockRegistry.register('paragraph', {
@@ -290,21 +392,22 @@ BlockRegistry.register('image', {
      * @returns {string} HTML string.
      */
     edit(data, block) {
-        let html = '<div class="block-image-editor">';
+        const blockId = block.id;
+        let html = '<div class="image-block-editor">';
         if (data.src) {
-            html += `<div class="block-image-preview mb-2"><img src="${data.src}" alt="${data.alt || ''}" style="max-width:100%;border-radius:4px;"></div>`;
+            html += `<div class="image-block-preview">
+                <img src="${data.src}" alt="${data.alt || ''}" style="max-width:100%;border-radius:4px;">
+            </div>`;
         } else {
-            html += `<div class="block-image-placeholder border rounded d-flex align-items-center justify-content-center mb-2" style="min-height:120px;background:#f8f9fa;">
-                <span class="text-muted">No image selected</span>
+            html += `<div class="image-block-placeholder" data-action="pick-media" onclick="openMediaPicker(function(item){ var b=document.querySelector('[data-block-id=\\'${blockId}\\']');if(b){var inp=b.querySelector('input[data-field=\\'src\\']');if(inp){inp.value=item.url;inp.dispatchEvent(new Event('input',{bubbles:true}));}var alt=b.querySelector('input[data-field=\\'alt\\']');if(alt&&!alt.value){alt.value=item.alt_text||'';alt.dispatchEvent(new Event('input',{bubbles:true}));}}});">
+                <div class="placeholder-icon">🖼</div>
+                <p>Click to pick from Media Library</p>
+                <p class="small text-muted">or drag & drop an image</p>
             </div>`;
         }
-        html += `<div class="mb-2">
-            <input type="text" class="form-control form-control-sm" data-field="src" placeholder="Image URL or media UUID" value="${data.src || ''}">
-        </div>`;
-        html += `<div class="mb-2">
-            <input type="text" class="form-control form-control-sm" data-field="alt" placeholder="Alt text (required)" value="${data.alt || ''}">
-        </div>`;
-        html += `<div class="mb-2">
+        html += `<div class="image-block-fields" style="margin-top: 8px;">
+            <input type="text" class="form-control form-control-sm mb-2" data-field="src" placeholder="Image URL or paste path" value="${data.src || ''}">
+            <input type="text" class="form-control form-control-sm mb-2" data-field="alt" placeholder="Alt text (required)" value="${data.alt || ''}">
             <input type="text" class="form-control form-control-sm" data-field="caption" placeholder="Caption (optional)" value="${data.caption || ''}">
         </div>`;
         html += '</div>';

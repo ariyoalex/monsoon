@@ -505,6 +505,8 @@ HTML;
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/manage.js"></script>
 <script src="/block-registry.js"></script>
+<script src="/block-api.js"></script>
+<script src="/block-manifest.js"></script>
 <script src="/block-editor.js"></script>
 <script src="/block-toolbar.js"></script>
 <script src="/block-revisions.js"></script>
