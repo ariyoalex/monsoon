@@ -131,6 +131,7 @@ final class ModuleLoader
                 'forms' => ['FormsModule', 'Forms'],
                 'security-hardening' => ['SecurityModule', 'SecurityHardening'],
                 'backup-restore' => ['BackupModule', 'BackupRestore'],
+                'wp-importer' => ['WpImporterModule', 'WpImporter'],
             ];
 
             if (isset($moduleClasses[$slug])) {

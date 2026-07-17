@@ -18,7 +18,8 @@
             "modules/seo-basics/",
             "modules/forms/",
             "modules/security-hardening/",
-            "modules/backup-restore/"
+            "modules/backup-restore/",
+            "modules/wp-importer/"
         ]
     },
     "autoload-dev": {

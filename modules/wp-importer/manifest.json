@@ -1,0 +1,27 @@
+{
+  "slug": "wp-importer",
+  "name": "WordPress Importer",
+  "version": "1.0.0",
+  "description": "One-click WordPress WXR import — posts, pages, media, users, categories, tags, with redirect preservation.",
+  "author": "Monsoon CMS",
+  "capabilities_required": [
+    "content.read",
+    "content.write",
+    "media.write",
+    "user.read",
+    "user.write",
+    "taxonomy.read",
+    "taxonomy.write",
+    "settings.write"
+  ],
+  "admin_routes": [
+    "/manage/import"
+  ],
+  "public_routes": [],
+  "migrations": [
+    "migrations/001_create_import_log.sql"
+  ],
+  "blocks": [],
+  "widgets": [],
+  "menu_locations": []
+}
