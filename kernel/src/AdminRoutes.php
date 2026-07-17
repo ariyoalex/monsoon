@@ -59,10 +59,10 @@ final class AdminRoutes
                     ];
                 }
 
-                header('Location: /manage');
+                header('Location: /manage/dashboard');
                 return [
                     'status' => 302,
-                    'headers' => ['Location' => '/manage'],
+                    'headers' => ['Location' => '/manage/dashboard'],
                     'body' => '',
                 ];
             } catch (\Throwable $e) {
@@ -248,7 +248,7 @@ HTML;
 <div class="sidebar" style="width: 250px;">
 <div class="brand">Monsoon CMS</div>
         <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage" aria-label="Dashboard" aria-current="page">Dashboard</a>
+<a href="/manage/dashboard" aria-label="Dashboard" aria-current="page">Dashboard</a>
 <a href="/manage/content" aria-label="Content">Content</a>
 <a href="/manage/media" aria-label="Media">Media</a>
 <a href="/manage/users" aria-label="Users">Users</a>
@@ -318,7 +318,7 @@ HTML;
 <div class="sidebar" style="width: 250px;">
 <div class="brand">Monsoon CMS</div>
         <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
 <a href="/manage/content" class="active" aria-label="Content" aria-current="page">Content</a>
 <a href="/manage/media" aria-label="Media">Media</a>
 <a href="/manage/users" aria-label="Users">Users</a>
@@ -430,7 +430,7 @@ HTML;
 <div class="sidebar" style="width: 250px;">
 <div class="brand">Monsoon CMS</div>
         <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
 <a href="/manage/content" class="active" aria-label="Content" aria-current="page">Content</a>
 <a href="/manage/media" aria-label="Media">Media</a>
 <a href="/manage/users" aria-label="Users">Users</a>
@@ -609,7 +609,7 @@ HTML;
 <div class="sidebar" style="width: 250px;">
 <div class="brand">Monsoon CMS</div>
         <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
 <a href="/manage/content" aria-label="Content">Content</a>
 <a href="/manage/media" class="active" aria-label="Media" aria-current="page">Media</a>
 <a href="/manage/users" aria-label="Users">Users</a>
@@ -856,7 +856,7 @@ HTML;
 <div class="sidebar" style="width: 250px;">
 <div class="brand">Monsoon CMS</div>
 <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
 <a href="/manage/content" aria-label="Content">Content</a>
 <a href="/manage/media" aria-label="Media">Media</a>
 <a href="/manage/users" class="active" aria-label="Users" aria-current="page">Users</a>
@@ -927,7 +927,7 @@ HTML;
 <div class="sidebar" style="width: 250px;">
 <div class="brand">Monsoon CMS</div>
 <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
 <a href="/manage/content" aria-label="Content">Content</a>
 <a href="/manage/media" aria-label="Media">Media</a>
 <a href="/manage/users" aria-label="Users">Users</a>
@@ -1070,7 +1070,7 @@ HTML;
 <div class="sidebar" style="width: 250px;">
 <div class="brand">Monsoon CMS</div>
 <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
 <a href="/manage/content" aria-label="Content">Content</a>
 <a href="/manage/media" aria-label="Media">Media</a>
 <a href="/manage/users" aria-label="Users">Users</a>
