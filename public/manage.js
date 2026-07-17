@@ -168,4 +168,41 @@ document.addEventListener('DOMContentLoaded', () => {
         container.style.zIndex = '11';
         document.body.appendChild(container);
     }
+
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+        let toggle = document.querySelector('.sidebar-toggle');
+        if (!toggle) {
+            toggle = document.createElement('button');
+            toggle.className = 'sidebar-toggle';
+            toggle.setAttribute('aria-label', 'Toggle navigation');
+            toggle.innerHTML = '&#9776;';
+            document.body.appendChild(toggle);
+        }
+
+        let overlay = document.querySelector('.sidebar-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        function openSidebar() {
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        }
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+
+        toggle.addEventListener('click', () => {
+            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        });
+        overlay.addEventListener('click', closeSidebar);
+
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', closeSidebar);
+        });
+    }
 });

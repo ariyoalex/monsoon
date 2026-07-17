@@ -274,12 +274,31 @@ final class ApiRouter
             $id = Uuid::v4();
             $now = date('Y-m-d H:i:s');
 
-            $stmt = $db->prepare('INSERT INTO settings (id, scope, setting_key, setting_value, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)');
+            $stmt = $db->prepare('INSERT INTO settings (id, scope, setting_key, setting_value, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()');
             $stmt->bind_param('ssssss', $id, $scope, $key, $value, $now, $now);
             $stmt->execute();
             $stmt->close();
 
             return Response::json(['data' => ['id' => $id, 'scope' => $scope, 'setting_key' => $key, 'setting_value' => $value]], 201);
+        });
+
+        $router->addRoute('PUT', '/api/v1/settings', function () use ($db) {
+            $data = (new Request())->json();
+            $updated = 0;
+
+            foreach ($data as $key => $value) {
+                if (is_array($value)) {
+                    continue;
+                }
+                $stmt = $db->prepare('INSERT INTO settings (id, scope, setting_key, setting_value, created_at, updated_at) VALUES (?, \'global\', ?, ?, NOW(), NOW()) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), updated_at = NOW()');
+                $fakeId = Uuid::v4();
+                $stmt->bind_param('sss', $fakeId, $key, $value);
+                $stmt->execute();
+                $updated += $stmt->affected_rows > 0 ? 1 : 0;
+                $stmt->close();
+            }
+
+            return Response::json(['data' => ['updated' => $updated]]);
         });
 
         // ==================== MEDIA ====================
