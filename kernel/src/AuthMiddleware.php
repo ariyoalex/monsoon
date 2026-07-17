@@ -10,7 +10,7 @@ final class AuthMiddleware implements MiddlewareInterface
     {
         $path = $request->path();
 
-        if (!str_starts_with($path, '/manage/') || $path === '/manage/login') {
+        if (!str_starts_with($path, '/manage/') || $path === '/manage/login' || $path === '/manage/install') {
             return $next($request);
         }
 

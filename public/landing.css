@@ -1,0 +1,48 @@
+/* Landing Page Styles */
+.landing-page { font-family: 'Graphik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #fff; }
+.landing-page h1, .landing-page h2, .landing-page h3, .section-title, .hero-title { font-family: 'Means', Georgia, serif; }
+
+/* Nav */
+.landing-nav { background: #1A1A1A; padding: 1rem 0; }
+
+/* Hero */
+.hero-section { background: linear-gradient(135deg, #1034A6 0%, #0d2b85 100%); color: #fff; padding: 6rem 0 5rem; }
+.hero-title { font-size: 3.5rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.1; }
+.hero-subtitle { font-size: 1.25rem; opacity: 0.9; max-width: 600px; margin: 0 auto 2rem; line-height: 1.6; }
+.hero-cta .btn-primary { background: #fff; color: #1034A6; border: none; font-weight: 600; }
+.hero-cta .btn-primary:hover { background: #f0f0f0; }
+.hero-cta .btn-outline-light { border-color: rgba(255,255,255,0.5); }
+.hero-cta .btn-outline-light:hover { background: rgba(255,255,255,0.1); }
+
+/* Sections */
+.section-title { font-size: 2.25rem; font-weight: 700; color: #1A1A1A; }
+
+/* Features */
+.feature-card { padding: 2rem; border-radius: 12px; background: #F4F6FA; height: 100%; transition: transform 0.2s, box-shadow 0.2s; }
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.feature-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.feature-card h3 { font-family: 'Means', Georgia, serif; font-size: 1.25rem; margin-bottom: 0.75rem; }
+.feature-card p { color: #555; margin: 0; }
+
+/* Stats */
+.stat-number { font-family: 'Means', Georgia, serif; font-size: 3rem; font-weight: 700; color: #fff; }
+.stat-label { font-size: 0.95rem; color: rgba(255,255,255,0.7); margin-top: 0.5rem; }
+
+/* Module code */
+.module-code { background: #1A1A1A; color: #a8d8a8; padding: 1.5rem; border-radius: 8px; font-size: 0.9rem; overflow-x: auto; }
+.module-features { list-style: none; padding: 0; }
+.module-features li { padding: 0.5rem 0; padding-left: 1.5rem; position: relative; color: #555; }
+.module-features li::before { content: '✓'; position: absolute; left: 0; color: #1034A6; font-weight: bold; }
+
+/* CTA */
+.bg-primary { background-color: #1034A6 !important; }
+
+/* Footer */
+footer { background: #1A1A1A; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title { font-size: 2.25rem; }
+    .hero-section { padding: 4rem 0 3rem; }
+    .stat-number { font-size: 2rem; }
+}

@@ -8,6 +8,22 @@ final class AdminRoutes
 {
     public static function register(Router $router, array $config): void
     {
+        $router->addRoute('GET', '/', function () {
+            return Response::html(self::renderLandingPage());
+        });
+
+        $router->addRoute('GET', '/manage/install', function () use ($config) {
+            $db = Database::getInstance()->getConnection();
+            $installer = new Installer($db, $config);
+
+            if ($installer->isInstalled()) {
+                return Response::redirect('/manage/login');
+            }
+
+            $result = $installer->run();
+            return Response::html(self::renderInstallPage($result));
+        });
+
         $router->addRoute('GET', '/manage/login', function () {
             return [
                 'status' => 200,
@@ -69,6 +85,10 @@ final class AdminRoutes
         });
 
         $router->addRoute('GET', '/manage', function () {
+            return Response::redirect('/manage/dashboard');
+        });
+
+        $router->addRoute('GET', '/manage/dashboard', function () {
             $auth = Auth::getInstance();
             if (!$auth->isAuthenticated()) {
                 return Response::redirect('/manage/login');
@@ -106,6 +126,16 @@ final class AdminRoutes
                 return Response::redirect('/manage/content');
             }
             return Response::html(self::renderContentEditor($item));
+        });
+
+        $router->addRoute('GET', '/manage/content/{id}/preview', function (array $params) {
+            $db = Database::getInstance()->getConnection();
+            $service = new ContentService($db);
+            $item = $service->findById($params['id']);
+            if ($item === null) {
+                return Response::redirect('/manage/content');
+            }
+            return Response::html(self::renderPreviewPage($item));
         });
 
         $router->addRoute('GET', '/manage/media', function () {
@@ -158,12 +188,11 @@ final class AdminRoutes
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Login - Monsoon CMS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
 <style>
-body { background: #F4F6FA; display: flex; align-items: center; min-height: 100vh; }
+body { display: flex; align-items: center; min-height: 100vh; }
 .login-card { max-width: 420px; width: 100%; }
-.card { border-color: #E1E5EC; }
 .card-header { background: #1034A6; color: #fff; }
-.btn-primary { background-color: #1034A6; border-color: #1034A6; }
 </style>
 </head>
 <body>
@@ -212,15 +241,7 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard - Monsoon CMS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body { background: #F4F6FA; }
-.sidebar { background: #1A1A1A; min-height: 100vh; color: #fff; }
-.sidebar a { color: #ccc; text-decoration: none; display: block; padding: 0.5rem 1rem; border-radius: 0.25rem; }
-.sidebar a:hover { background: #333; color: #fff; }
-.sidebar .brand { padding: 1rem; font-weight: 700; color: #fff; border-bottom: 1px solid #333; }
-.content { padding: 2rem; }
-.card { border-color: #E1E5EC; }
-</style>
+<link rel="stylesheet" href="/admin.css">
 </head>
 <body>
 <div class="d-flex">
@@ -286,14 +307,8 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Content - Monsoon CMS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
 <style>
-body { background: #F4F6FA; }
-.sidebar { background: #1A1A1A; min-height: 100vh; color: #fff; }
-.sidebar a { color: #ccc; text-decoration: none; display: block; padding: 0.5rem 1rem; border-radius: 0.25rem; }
-.sidebar a:hover, .sidebar a.active { background: #333; color: #fff; }
-.sidebar .brand { padding: 1rem; font-weight: 700; color: #fff; border-bottom: 1px solid #333; }
-.content { padding: 2rem; }
-.card { border-color: #E1E5EC; }
 .table th { font-weight: 600; color: #555555; }
 .status-badge { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 1rem; }
 </style>
@@ -408,19 +423,7 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{$pageTitle} - Monsoon CMS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body { background: #F4F6FA; }
-.sidebar { background: #1A1A1A; min-height: 100vh; color: #fff; }
-.sidebar a { color: #ccc; text-decoration: none; display: block; padding: 0.5rem 1rem; border-radius: 0.25rem; }
-.sidebar a:hover, .sidebar a.active { background: #333; color: #fff; }
-.sidebar .brand { padding: 1rem; font-weight: 700; color: #fff; border-bottom: 1px solid #333; }
-.content { padding: 2rem; }
-.card { border-color: #E1E5EC; }
-.btn-primary { background-color: #1034A6; border-color: #1034A6; }
-.form-control:focus { border-color: #1034A6; box-shadow: 0 0 0 0.2rem rgba(16, 52, 166, 0.25); }
-.toast-container { position: fixed; bottom: 1rem; right: 1rem; z-index: 9999; }
-.toast { min-width: 280px; }
-</style>
+<link rel="stylesheet" href="/admin.css">
 </head>
 <body>
 <div class="d-flex">
@@ -504,11 +507,15 @@ body { background: #F4F6FA; }
 <script src="/block-registry.js"></script>
 <script src="/block-editor.js"></script>
 <script src="/block-toolbar.js"></script>
+<script src="/block-revisions.js"></script>
+<script src="/block-preview.js"></script>
 <script>
 const INITIAL_BLOCKS = {$bodyJson};
 document.addEventListener('DOMContentLoaded', function() {
     BlockEditor.init('block-editor-canvas');
     BlockToolbar.init();
+    BlockRevisions.init('{$id}');
+    BlockPreview.init();
 
     if (Array.isArray(INITIAL_BLOCKS) && INITIAL_BLOCKS.length > 0) {
         BlockEditor.setBlocks(INITIAL_BLOCKS);
@@ -582,14 +589,8 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Media - Monsoon CMS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
 <style>
-body { background: #F4F6FA; }
-.sidebar { background: #1A1A1A; min-height: 100vh; color: #fff; }
-.sidebar a { color: #ccc; text-decoration: none; display: block; padding: 0.5rem 1rem; border-radius: 0.25rem; }
-.sidebar a:hover, .sidebar a.active { background: #333; color: #fff; }
-.sidebar .brand { padding: 1rem; font-weight: 700; color: #fff; border-bottom: 1px solid #333; }
-.content { padding: 2rem; }
-.card { border-color: #E1E5EC; }
 .upload-zone { border: 2px dashed #E1E5EC; border-radius: 0.5rem; padding: 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s; }
 .upload-zone:hover { border-color: #1034A6; }
 .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
@@ -601,9 +602,6 @@ body { background: #F4F6FA; }
 .media-card .info .meta { font-size: 0.7rem; color: #555555; }
 .media-card .delete-btn { position: absolute; top: 0.25rem; right: 0.25rem; background: #D33F3F; color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 0.7rem; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
 .media-card:hover .delete-btn { opacity: 1; }
-.btn-primary { background-color: #1034A6; border-color: #1034A6; }
-.toast-container { position: fixed; bottom: 1rem; right: 1rem; z-index: 9999; }
-.toast { min-width: 280px; }
 </style>
 </head>
 <body>
@@ -851,15 +849,7 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Users - Monsoon CMS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body { background: #F4F6FA; }
-.sidebar { background: #1A1A1A; min-height: 100vh; color: #fff; }
-.sidebar a { color: #ccc; text-decoration: none; display: block; padding: 0.5rem 1rem; border-radius: 0.25rem; }
-.sidebar a:hover, .sidebar a.active { background: #333; color: #fff; }
-.sidebar .brand { padding: 1rem; font-weight: 700; color: #fff; border-bottom: 1px solid #333; }
-.content { padding: 2rem; }
-.card { border-color: #E1E5EC; }
-</style>
+<link rel="stylesheet" href="/admin.css">
 </head>
 <body>
 <div class="d-flex">
@@ -930,19 +920,7 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Settings - Monsoon CMS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body { background: #F4F6FA; }
-.sidebar { background: #1A1A1A; min-height: 100vh; color: #fff; }
-.sidebar a { color: #ccc; text-decoration: none; display: block; padding: 0.5rem 1rem; border-radius: 0.25rem; }
-.sidebar a:hover, .sidebar a.active { background: #333; color: #fff; }
-.sidebar .brand { padding: 1rem; font-weight: 700; color: #fff; border-bottom: 1px solid #333; }
-.content { padding: 2rem; }
-.card { border-color: #E1E5EC; }
-.btn-primary { background-color: #1034A6; border-color: #1034A6; }
-.form-control:focus { border-color: #1034A6; box-shadow: 0 0 0 0.2rem rgba(16, 52, 166, 0.25); }
-.toast-container { position: fixed; bottom: 1rem; right: 1rem; z-index: 9999; }
-.toast { min-width: 280px; }
-</style>
+<link rel="stylesheet" href="/admin.css">
 </head>
 <body>
 <div class="d-flex">
@@ -1082,18 +1060,8 @@ HTML;
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Roles - Monsoon CMS</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
 <style>
-body { background: #F4F6FA; }
-.sidebar { background: #1A1A1A; min-height: 100vh; color: #fff; }
-.sidebar a { color: #ccc; text-decoration: none; display: block; padding: 0.5rem 1rem; border-radius: 0.25rem; }
-.sidebar a:hover, .sidebar a.active { background: #333; color: #fff; }
-.sidebar .brand { padding: 1rem; font-weight: 700; color: #fff; border-bottom: 1px solid #333; }
-.content { padding: 2rem; }
-.card { border-color: #E1E5EC; }
-.btn-primary { background-color: #1034A6; border-color: #1034A6; }
-.form-control:focus, .form-select:focus { border-color: #1034A6; box-shadow: 0 0 0 0.2rem rgba(16, 52, 166, 0.25); }
-.toast-container { position: fixed; bottom: 1rem; right: 1rem; z-index: 9999; }
-.toast { min-width: 280px; }
 .cap-badge { font-size: 0.7rem; padding: 0.15rem 0.4rem; margin: 0.1rem; display: inline-block; }
 </style>
 </head>
@@ -1298,6 +1266,364 @@ function saveRole() {
     });
 }
 </script>
+</body>
+</html>
+HTML;
+    }
+
+    private static function renderInstallPage(array $result): string
+    {
+        $migrations = $result['migrations'] ?? [];
+        $roles = $result['roles'] ?? [];
+        $admin = $result['admin'] ?? null;
+
+        $migrationList = '';
+        $applied = $migrations['applied'] ?? [];
+        foreach ($applied as $m) {
+            $name = htmlspecialchars((string)$m, ENT_QUOTES, 'UTF-8');
+            $migrationList .= "<li>{$name}</li>";
+        }
+        if (empty($applied)) {
+            $migrationList = '<li>Database already up to date</li>';
+        }
+
+        $roleList = '';
+        foreach ($roles as $r) {
+            $name = htmlspecialchars($r['name'] ?? '', ENT_QUOTES, 'UTF-8');
+            $roleList .= "<li>{$name}</li>";
+        }
+        if (empty($roles)) {
+            $roleList = '<li>Roles already exist</li>';
+        }
+
+        $adminSection = '';
+        if ($admin !== null) {
+            $adminEmail = htmlspecialchars($admin['email'] ?? 'admin@monsoon.local', ENT_QUOTES, 'UTF-8');
+            $adminSection = <<<HTML
+<div class="mb-4">
+<h3 class="h5">Admin User Created</h3>
+<ul class="list-unstyled">
+<li><strong>Email:</strong> {$adminEmail}</li>
+<li><strong>Password:</strong> admin123</li>
+</ul>
+</div>
+HTML;
+        }
+
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installation Complete - Monsoon CMS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+<style>
+body { background: #F4F6FA; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.install-card { max-width: 560px; width: 100%; }
+.card { border-color: #E1E5EC; }
+.card-header { background: #1034A6; color: #fff; }
+.btn-primary { background-color: #1034A6; border-color: #1034A6; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="row justify-content-center">
+<div class="col install-card">
+<div class="card shadow-sm">
+<div class="card-header">
+<h1 class="h4 mb-0">Monsoon CMS</h1>
+</div>
+<div class="card-body">
+<h2 class="h3 mb-4">Installation Complete</h2>
+<div class="mb-4">
+<h3 class="h5">Migrations Run</h3>
+<ul class="list-unstyled">{$migrationList}</ul>
+</div>
+<div class="mb-4">
+<h3 class="h5">Roles Created</h3>
+<ul class="list-unstyled">{$roleList}</ul>
+</div>
+{$adminSection}
+<a href="/manage/login" class="btn btn-primary w-100" aria-label="Go to Login">Go to Login</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+HTML;
+    }
+
+    private static function renderPreviewPage(array $item): string
+    {
+        $title = htmlspecialchars($item['title'] ?? 'Untitled', ENT_QUOTES, 'UTF-8');
+        $status = $item['status'] ?? 'draft';
+        $statusClass = $status === 'published' ? 'success' : ($status === 'draft' ? 'secondary' : 'warning');
+        $statusLabel = htmlspecialchars(ucfirst($status), ENT_QUOTES, 'UTF-8');
+        $id = htmlspecialchars($item['id'] ?? '', ENT_QUOTES, 'UTF-8');
+        $bodyJson = $item['body'] ?? '[]';
+        if ($bodyJson === '' || $bodyJson === null) {
+            $bodyJson = '[]';
+        }
+
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{$title} - Preview - Monsoon CMS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+<style>
+body { background: #fff; font-family: 'Graphik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+.preview-header { background: #F4F6FA; border-bottom: 1px solid #E1E5EC; padding: 1rem 2rem; }
+.preview-header h1 { font-family: 'Means', Georgia, serif; margin: 0; }
+.preview-container { max-width: 800px; margin: 2rem auto; padding: 0 2rem; }
+.preview-block { margin-bottom: 1.5rem; }
+.preview-block h1, .preview-block h2, .preview-block h3, .preview-block h4, .preview-block h5, .preview-block h6 { font-family: 'Means', Georgia, serif; }
+.preview-block p { font-size: 1.1rem; line-height: 1.7; }
+.preview-block img { max-width: 100%; height: auto; border-radius: 0.5rem; }
+.preview-block blockquote { border-left: 4px solid #1034A6; padding-left: 1rem; margin-left: 0; color: #555555; font-style: italic; }
+.preview-block blockquote footer { font-style: normal; font-size: 0.9rem; color: #777; margin-top: 0.5rem; }
+.preview-block hr { border: none; border-top: 1px solid #E1E5EC; margin: 2rem 0; }
+.preview-block figure { margin: 0; }
+.preview-block figcaption { font-size: 0.9rem; color: #555555; margin-top: 0.5rem; text-align: center; }
+.preview-block .btn { display: inline-block; padding: 0.5rem 1.5rem; border-radius: 0.25rem; text-decoration: none; font-weight: 600; }
+.preview-block .btn-primary { background: #1034A6; color: #fff; }
+.preview-block .btn-secondary { background: #6c757d; color: #fff; }
+.status-badge { font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 1rem; }
+.back-link { color: #1034A6; text-decoration: none; }
+.back-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="preview-header d-flex justify-content-between align-items-center">
+<a href="/manage/content/{$id}/edit" class="back-link" aria-label="Back to Editor">&larr; Back to Editor</a>
+<span class="status-badge bg-{$statusClass} text-white">{$statusLabel}</span>
+</div>
+<div class="preview-container">
+<h1>{$title}</h1>
+<div id="preview-content"></div>
+</div>
+<script>
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+const blocks = {$bodyJson};
+const container = document.getElementById('preview-content');
+blocks.forEach(block => {
+    const div = document.createElement('div');
+    div.className = 'preview-block block-type-' + block.type;
+    switch(block.type) {
+        case 'heading':
+            const level = block.data.level || 2;
+            div.innerHTML = '<h' + level + '>' + escapeHtml(block.data.text || '') + '</h' + level + '>';
+            break;
+        case 'paragraph':
+            div.innerHTML = '<p>' + (block.data.text || '') + '</p>';
+            break;
+        case 'image':
+            div.innerHTML = '<figure><img src="' + escapeHtml(block.data.src || '') + '" alt="' + escapeHtml(block.data.alt || '') + '">' + (block.data.caption ? '<figcaption>' + escapeHtml(block.data.caption) + '</figcaption>' : '') + '</figure>';
+            break;
+        case 'list':
+            const tag = block.data.ordered ? 'ol' : 'ul';
+            div.innerHTML = '<' + tag + '>' + (block.data.items || []).map(item => '<li>' + escapeHtml(item) + '</li>').join('') + '</' + tag + '>';
+            break;
+        case 'quote':
+            div.innerHTML = '<blockquote><p>' + escapeHtml(block.data.text || '') + '</p>' + (block.data.attribution ? '<footer>' + escapeHtml(block.data.attribution) + '</footer>' : '') + '</blockquote>';
+            break;
+        case 'separator':
+            div.innerHTML = '<hr>';
+            break;
+        case 'button':
+            div.innerHTML = '<a href="' + escapeHtml(block.data.url || '#') + '" class="btn btn-' + escapeHtml(block.data.style || 'primary') + '">' + escapeHtml(block.data.text || '') + '</a>';
+            break;
+        default:
+            div.innerHTML = '<p>[Unknown block: ' + block.type + ']</p>';
+    }
+    container.appendChild(div);
+});
+</script>
+</body>
+</html>
+HTML;
+    }
+
+    private static function renderLandingPage(): string
+    {
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monsoon CMS — Open Source Content Management</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+<link rel="stylesheet" href="/landing.css">
+</head>
+<body class="landing-page">
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark landing-nav">
+<div class="container">
+<a class="navbar-brand fw-bold" href="/">Monsoon</a>
+<div class="navbar-nav ms-auto">
+<a class="nav-link" href="#features">Features</a>
+<a class="nav-link" href="#modules">Modules</a>
+<a class="nav-link" href="#performance">Performance</a>
+<a class="nav-link" href="/manage/login" class="btn btn-outline-light btn-sm ms-3">Log In</a>
+</div>
+</div>
+</nav>
+
+<!-- Hero -->
+<section class="hero-section">
+<div class="container text-center">
+<h1 class="hero-title">The CMS that gets out of your way.</h1>
+<p class="hero-subtitle">Monsoon is an open source, modular CMS built for developers and content creators who want speed, flexibility, and full control — without the bloat.</p>
+<div class="hero-cta">
+<a href="/manage/install" class="btn btn-primary btn-lg me-3">Get Started</a>
+<a href="#features" class="btn btn-outline-light btn-lg">Learn More</a>
+</div>
+</div>
+</section>
+
+<!-- Features -->
+<section id="features" class="py-5">
+<div class="container">
+<h2 class="section-title text-center mb-5">Built Different</h2>
+<div class="row g-4">
+<div class="col-md-4">
+<div class="feature-card">
+<div class="feature-icon">⚡</div>
+<h3>Blazing Fast</h3>
+<p>PHP 8.4, MySQLi with prepared statements, minimal overhead. Loads under 2 seconds on shared hosting.</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="feature-card">
+<div class="feature-icon">🧩</div>
+<h3>Fully Modular</h3>
+<p>Every feature is a module. Install only what you need. Modules register routes, permissions, and blocks through a simple manifest.</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="feature-card">
+<div class="feature-icon">🔒</div>
+<h3>Permission-Gated</h3>
+<p>18 granular capabilities out of the box. Every action checks permissions — API, admin, and modules alike.</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="feature-card">
+<div class="feature-icon">✏️</div>
+<h3>Block Editor</h3>
+<p>Drag-to-reorder blocks, slash commands, auto-save, undo/redo. Build pages visually without writing code.</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="feature-card">
+<div class="feature-icon">🎨</div>
+<h3>Theme Engine</h3>
+<p>Template hierarchy, asset enqueue system, customizer. Themes can override any template without touching core.</p>
+</div>
+</div>
+<div class="col-md-4">
+<div class="feature-card">
+<div class="feature-icon">🔌</div>
+<h3>Plugin System</h3>
+<p>Hooks and filters everywhere. Extend any part of the system — content pipeline, admin UI, REST API, or front-end rendering.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Performance Stats -->
+<section id="performance" class="py-5 bg-dark text-white">
+<div class="container text-center">
+<h2 class="section-title mb-5">Performance First</h2>
+<div class="row g-4">
+<div class="col-md-3">
+<div class="stat-number">&lt;2s</div>
+<div class="stat-label">Page Load on Shared Hosting</div>
+</div>
+<div class="col-md-3">
+<div class="stat-number">&lt;1s</div>
+<div class="stat-label">Content Save Time</div>
+</div>
+<div class="col-md-3">
+<div class="stat-number">0</div>
+<div class="stat-label">jQuery Dependencies</div>
+</div>
+<div class="col-md-3">
+<div class="stat-number">100%</div>
+<div class="stat-label">Vanilla JavaScript</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Modules -->
+<section id="modules" class="py-5">
+<div class="container">
+<h2 class="section-title text-center mb-5">Module Architecture</h2>
+<div class="row align-items-center">
+<div class="col-lg-6">
+<pre class="module-code"><code>{
+  "name": "monsoon/comments",
+  "version": "1.0.0",
+  "permissions": [
+    "comments.read",
+    "comments.moderate"
+  ],
+  "routes": {
+    "/api/v1/comments": "CommentsApiController"
+  },
+  "blocks": {
+    "comment-form": "CommentFormBlock"
+  }
+}</code></pre>
+</div>
+<div class="col-lg-6">
+<h3>One manifest. Full control.</h3>
+<p class="lead">Each module declares its permissions, routes, and blocks in a simple JSON manifest. Monsoon handles the rest — registration, gating, and lifecycle.</p>
+<ul class="module-features">
+<li>Self-contained with own database migrations</li>
+<li>Registers permissions automatically</li>
+<li>Provides custom blocks for the editor</li>
+<li>Can hook into any system event</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 bg-primary text-white">
+<div class="container text-center">
+<h2>Ready to build?</h2>
+<p class="lead mb-4">Monsoon is free and open source. Start building your next project today.</p>
+<a href="/manage/install" class="btn btn-light btn-lg">Install Monsoon</a>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="py-4 bg-dark text-white">
+<div class="container text-center">
+<p class="mb-0">&copy; 2026 Monsoon CMS. Open source under the GPL v3.</p>
+</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 HTML;

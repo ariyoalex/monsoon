@@ -19,12 +19,16 @@ final class Installer
 
     public function isInstalled(): bool
     {
-        $result = $this->db->query('SELECT COUNT(*) AS count FROM users');
-        if ($result === false) {
+        try {
+            $result = $this->db->query('SELECT COUNT(*) AS count FROM users');
+            if ($result === false) {
+                return false;
+            }
+            $row = $result->fetch_assoc();
+            return (int)($row['count'] ?? 0) > 0;
+        } catch (\Throwable) {
             return false;
         }
-        $row = $result->fetch_assoc();
-        return (int)($row['count'] ?? 0) > 0;
     }
 
     public function run(): array
