@@ -5,11 +5,13 @@ namespace Monsoon\Kernel;
 final class ThemeLoader
 {
     private string $themesDir;
+    private ?\mysqli $db;
     private ?array $activeTheme = null;
 
-    public function __construct(string $themesDir)
+    public function __construct(string $themesDir, ?\mysqli $db = null)
     {
         $this->themesDir = rtrim($themesDir, '/');
+        $this->db = $db;
     }
 
     public function getAvailableThemes(): array
@@ -37,7 +39,54 @@ final class ThemeLoader
 
     public function getActiveThemeName(): string
     {
-        return 'starter';
+        if ($this->db === null) {
+            return 'starter';
+        }
+        $stmt = $this->db->prepare('SELECT setting_value FROM settings WHERE setting_key = ? LIMIT 1');
+        $key = 'theme_active';
+        $stmt->bind_param('s', $key);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $stmt->close();
+        return $row['setting_value'] ?? 'starter';
+    }
+
+    public function setActiveTheme(string $themeName): void
+    {
+        if ($this->db === null) {
+            return;
+        }
+        $stmt = $this->db->prepare('UPDATE settings SET setting_value = ?, updated_at = NOW() WHERE setting_key = ?');
+        $key = 'theme_active';
+        $stmt->bind_param('ss', $themeName, $key);
+        $stmt->execute();
+        $stmt->close();
+        $this->activeTheme = null;
+    }
+
+    public function getThemeSettings(): array
+    {
+        if ($this->db === null) {
+            return [];
+        }
+        $result = $this->db->query("SELECT setting_key, setting_value FROM settings WHERE setting_key LIKE 'site_%' OR setting_key LIKE 'theme_%' OR setting_key LIKE '%_color' OR setting_key LIKE 'font_%'");
+        $settings = [];
+        while ($row = $result->fetch_assoc()) {
+            $settings[$row['setting_key']] = $row['setting_value'];
+        }
+        return $settings;
+    }
+
+    public function updateThemeSetting(string $key, string $value): void
+    {
+        if ($this->db === null) {
+            return;
+        }
+        $stmt = $this->db->prepare('UPDATE settings SET setting_value = ?, updated_at = NOW() WHERE setting_key = ?');
+        $stmt->bind_param('ss', $value, $key);
+        $stmt->execute();
+        $stmt->close();
     }
 
     public function loadManifest(string $themeName): ?array

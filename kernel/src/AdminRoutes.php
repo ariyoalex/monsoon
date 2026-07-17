@@ -169,6 +169,46 @@ final class AdminRoutes
             }
             return Response::html(self::renderRolesPage());
         });
+
+        $router->addRoute('GET', '/manage/customize', function () {
+            $auth = Auth::getInstance();
+            if (!$auth->isAuthenticated()) {
+                return Response::redirect('/manage/login');
+            }
+            return Response::html(self::renderCustomizerPage());
+        });
+
+        $router->addRoute('GET', '/manage/customize/preview', function () {
+            $auth = Auth::getInstance();
+            if (!$auth->isAuthenticated()) {
+                return Response::redirect('/manage/login');
+            }
+            return Response::html(self::renderCustomizerPreview());
+        });
+
+        $router->addRoute('GET', '/manage/menus', function () {
+            $auth = Auth::getInstance();
+            if (!$auth->isAuthenticated()) {
+                return Response::redirect('/manage/login');
+            }
+            return Response::html(self::renderMenusPage());
+        });
+
+        $router->addRoute('GET', '/manage/widgets', function () {
+            $auth = Auth::getInstance();
+            if (!$auth->isAuthenticated()) {
+                return Response::redirect('/manage/login');
+            }
+            return Response::html(self::renderWidgetsPage());
+        });
+
+        $router->addRoute('GET', '/manage/themes', function () {
+            $auth = Auth::getInstance();
+            if (!$auth->isAuthenticated()) {
+                return Response::redirect('/manage/login');
+            }
+            return Response::html(self::renderThemesPage());
+        });
     }
 
     private static function renderLoginPage(string $error = ''): string
@@ -254,6 +294,10 @@ HTML;
 <a href="/manage/users" aria-label="Users">Users</a>
 <a href="/manage/roles" aria-label="Roles">Roles</a>
 <a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/menus" aria-label="Menus">Menus</a>
+<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -324,6 +368,10 @@ HTML;
 <a href="/manage/users" aria-label="Users">Users</a>
 <a href="/manage/roles" aria-label="Roles">Roles</a>
 <a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/menus" aria-label="Menus">Menus</a>
+<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -436,6 +484,10 @@ HTML;
 <a href="/manage/users" aria-label="Users">Users</a>
 <a href="/manage/roles" aria-label="Roles">Roles</a>
 <a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/menus" aria-label="Menus">Menus</a>
+<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -617,6 +669,10 @@ HTML;
 <a href="/manage/users" aria-label="Users">Users</a>
 <a href="/manage/roles" aria-label="Roles">Roles</a>
 <a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/menus" aria-label="Menus">Menus</a>
+<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -864,6 +920,10 @@ HTML;
 <a href="/manage/users" class="active" aria-label="Users" aria-current="page">Users</a>
 <a href="/manage/roles" aria-label="Roles">Roles</a>
 <a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/menus" aria-label="Menus">Menus</a>
+<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -935,6 +995,10 @@ HTML;
 <a href="/manage/users" aria-label="Users">Users</a>
 <a href="/manage/roles" aria-label="Roles">Roles</a>
 <a href="/manage/settings" class="active" aria-label="Settings" aria-current="page">Settings</a>
+<a href="/manage/menus" aria-label="Menus">Menus</a>
+<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -1078,6 +1142,10 @@ HTML;
 <a href="/manage/users" aria-label="Users">Users</a>
 <a href="/manage/roles" class="active" aria-label="Roles" aria-current="page">Roles</a>
 <a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/menus" aria-label="Menus">Menus</a>
+<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -1481,7 +1549,7 @@ HTML;
 <a class="nav-link" href="#features">Features</a>
 <a class="nav-link" href="#modules">Modules</a>
 <a class="nav-link" href="#performance">Performance</a>
-<a class="nav-link" href="/manage/login" class="btn btn-outline-light btn-sm ms-3">Log In</a>
+<a href="/manage/login" class="btn btn-outline-light btn-sm ms-3">Log In</a>
 </div>
 </div>
 </nav>
@@ -1505,42 +1573,42 @@ HTML;
 <div class="row g-4">
 <div class="col-md-4">
 <div class="feature-card">
-<div class="feature-icon">⚡</div>
+<div class="feature-icon">&#9889;</div>
 <h3>Blazing Fast</h3>
 <p>PHP 8.4, MySQLi with prepared statements, minimal overhead. Loads under 2 seconds on shared hosting.</p>
 </div>
 </div>
 <div class="col-md-4">
 <div class="feature-card">
-<div class="feature-icon">🧩</div>
+<div class="feature-icon">&#129513;</div>
 <h3>Fully Modular</h3>
 <p>Every feature is a module. Install only what you need. Modules register routes, permissions, and blocks through a simple manifest.</p>
 </div>
 </div>
 <div class="col-md-4">
 <div class="feature-card">
-<div class="feature-icon">🔒</div>
+<div class="feature-icon">&#128274;</div>
 <h3>Permission-Gated</h3>
 <p>18 granular capabilities out of the box. Every action checks permissions — API, admin, and modules alike.</p>
 </div>
 </div>
 <div class="col-md-4">
 <div class="feature-card">
-<div class="feature-icon">✏️</div>
+<div class="feature-icon">&#9999;&#65039;</div>
 <h3>Block Editor</h3>
 <p>Drag-to-reorder blocks, slash commands, auto-save, undo/redo. Build pages visually without writing code.</p>
 </div>
 </div>
 <div class="col-md-4">
 <div class="feature-card">
-<div class="feature-icon">🎨</div>
+<div class="feature-icon">&#127912;</div>
 <h3>Theme Engine</h3>
 <p>Template hierarchy, asset enqueue system, customizer. Themes can override any template without touching core.</p>
 </div>
 </div>
 <div class="col-md-4">
 <div class="feature-card">
-<div class="feature-icon">🔌</div>
+<div class="feature-icon">&#128268;</div>
 <h3>Plugin System</h3>
 <p>Hooks and filters everywhere. Extend any part of the system — content pipeline, admin UI, REST API, or front-end rendering.</p>
 </div>
@@ -1626,6 +1694,1095 @@ HTML;
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+HTML;
+    }
+
+    private static function renderCustomizerPage(): string
+    {
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customize - Monsoon CMS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+<style>
+.customizer-layout { display: flex; height: calc(100vh - 56px); }
+.customizer-controls { width: 350px; overflow-y: auto; border-right: 1px solid #dee2e6; background: #fff; }
+.customizer-controls .accordion-body { padding: 1rem; }
+.customizer-preview { flex: 1; background: #f0f0f0; }
+.customizer-preview iframe { width: 100%; height: 100%; border: none; }
+.color-picker-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.color-picker-row label { flex: 1; font-size: 0.9rem; }
+.color-picker-row input[type="color"] { width: 40px; height: 32px; border: 1px solid #dee2e6; border-radius: 4px; cursor: pointer; padding: 2px; }
+</style>
+</head>
+<body>
+<div class="d-flex">
+<div class="sidebar" style="width: 250px;">
+<div class="brand">Monsoon CMS</div>
+<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/content" aria-label="Content">Content</a>
+<a href="/manage/media" aria-label="Media">Media</a>
+<a href="/manage/users" aria-label="Users">Users</a>
+<a href="/manage/roles" aria-label="Roles">Roles</a>
+<a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/customize" class="active" aria-label="Customize" aria-current="page">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
+</nav>
+</div>
+<div class="content flex-grow-1 p-0">
+<div class="d-flex justify-content-between align-items-center mb-0 px-3 py-2 border-bottom bg-white">
+<div class="d-flex align-items-center gap-3">
+<a href="/manage/dashboard" class="text-decoration-none" style="color:#1034A6;font-size:0.9rem;">&larr; Back to Dashboard</a>
+<h1 class="h5 mb-0">Customize Your Site</h1>
+</div>
+<button type="button" class="btn btn-primary btn-sm" id="save-publish-btn" onclick="MonsoonCustomizer.save()" aria-label="Save and publish settings">Save &amp; Publish</button>
+</div>
+<div class="customizer-layout">
+<div class="customizer-controls">
+<div class="accordion" id="customizer-accordion">
+<div class="accordion-item">
+<h2 class="accordion-header" id="heading-identity">
+<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-identity" aria-expanded="true" aria-controls="collapse-identity">
+<strong>Site Identity</strong>
+</button>
+</h2>
+<div id="collapse-identity" class="accordion-collapse collapse show" data-bs-parent="#customizer-accordion">
+<div class="accordion-body">
+<div class="mb-3">
+<label for="site-title" class="form-label fw-semibold">Site Title</label>
+<input type="text" class="form-control" id="site-title" placeholder="My Site">
+</div>
+<div class="mb-3">
+<label for="site-tagline" class="form-label fw-semibold">Tagline</label>
+<input type="text" class="form-control" id="site-tagline" placeholder="A short description">
+</div>
+<div class="mb-0">
+<label class="form-label fw-semibold">Site Icon</label>
+<div class="d-flex align-items-center gap-2">
+<div id="site-icon-preview" style="width:40px;height:40px;border:1px solid #dee2e6;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#F4F6FA;font-size:1.2rem;">&#9679;</div>
+<button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('site-icon-input').click()">Choose File</button>
+<input type="file" id="site-icon-input" accept="image/*" style="display:none;">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="accordion-item">
+<h2 class="accordion-header" id="heading-colors">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-colors" aria-expanded="false" aria-controls="collapse-colors">
+<strong>Colors</strong>
+</button>
+</h2>
+<div id="collapse-colors" class="accordion-collapse collapse" data-bs-parent="#customizer-accordion">
+<div class="accordion-body">
+<div class="color-picker-row">
+<label>Primary Color</label>
+<input type="color" id="primary-color" value="#1034A6" data-setting="primaryColor">
+</div>
+<div class="color-picker-row">
+<label>Sidebar Color</label>
+<input type="color" id="sidebar-color" value="#1A1A1A" data-setting="sidebarColor">
+</div>
+<div class="color-picker-row">
+<label>Background Color</label>
+<input type="color" id="background-color" value="#ffffff" data-setting="backgroundColor">
+</div>
+</div>
+</div>
+</div>
+<div class="accordion-item">
+<h2 class="accordion-header" id="heading-typography">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-typography" aria-expanded="false" aria-controls="collapse-typography">
+<strong>Typography</strong>
+</button>
+</h2>
+<div id="collapse-typography" class="accordion-collapse collapse" data-bs-parent="#customizer-accordion">
+<div class="accordion-body">
+<div class="mb-3">
+<label for="body-font" class="form-label fw-semibold">Body Font</label>
+<select class="form-select" id="body-font" data-setting="bodyFont">
+<option value="Graphik">Graphik</option>
+<option value="system-ui">System</option>
+<option value="Georgia, serif">Georgia</option>
+</select>
+</div>
+<div class="mb-0">
+<label for="heading-font" class="form-label fw-semibold">Heading Font</label>
+<select class="form-select" id="heading-font" data-setting="headingFont">
+<option value="Means">Means</option>
+<option value="Georgia, serif">Georgia</option>
+<option value="system-ui">System</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="accordion-item">
+<h2 class="accordion-header" id="heading-menus">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-menus" aria-expanded="false" aria-controls="collapse-menus">
+<strong>Menus</strong>
+</button>
+</h2>
+<div id="collapse-menus" class="accordion-collapse collapse" data-bs-parent="#customizer-accordion">
+<div class="accordion-body">
+<p class="text-muted small mb-3">Assign menu locations for your theme.</p>
+<div class="mb-3">
+<label for="menu-primary" class="form-label fw-semibold">Primary Menu</label>
+<select class="form-select" id="menu-primary" data-setting="menuPrimary">
+<option value="">None</option>
+</select>
+</div>
+<div class="mb-0">
+<label for="menu-footer" class="form-label fw-semibold">Footer Menu</label>
+<select class="form-select" id="menu-footer" data-setting="menuFooter">
+<option value="">None</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="accordion-item">
+<h2 class="accordion-header" id="heading-widgets">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-widgets" aria-expanded="false" aria-controls="collapse-widgets">
+<strong>Widgets</strong>
+</button>
+</h2>
+<div id="collapse-widgets" class="accordion-collapse collapse" data-bs-parent="#customizer-accordion">
+<div class="accordion-body">
+<p class="text-muted small mb-3">Manage widget areas for sidebars and footers.</p>
+<a href="/manage/settings" class="btn btn-outline-secondary btn-sm w-100">Widget Settings &rarr;</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="customizer-preview">
+<iframe id="customize-preview" src="/manage/customize/preview" title="Live Preview"></iframe>
+</div>
+</div>
+</div>
+</div>
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index:11" aria-live="polite"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/manage.js"></script>
+<script src="/customizer.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    MonsoonCustomizer.init();
+});
+</script>
+</body>
+</html>
+HTML;
+    }
+
+    private static function renderCustomizerPreview(): string
+    {
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview - Customize</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+:root {
+    --color-primary: #1034A6;
+    --color-sidebar: #1A1A1A;
+    --color-bg: #ffffff;
+    --font-body: 'Graphik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-heading: 'Means', Georgia, serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--color-bg); color: #1A1A1A; }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-heading); }
+.site-header { background: var(--color-sidebar); color: #fff; padding: 1rem 0; }
+.site-header .container { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+.site-header .site-title { font-size: 1.25rem; font-weight: 700; color: #fff; text-decoration: none; font-family: var(--font-heading); }
+.site-header .site-tagline { font-size: 0.8rem; color: #ccc; margin-left: 1rem; }
+.site-header nav a { color: #ccc; text-decoration: none; margin-left: 1.5rem; font-size: 0.9rem; }
+.site-header nav a:hover { color: #fff; }
+.site-main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; display: flex; gap: 2rem; }
+.site-main .main-content { flex: 1; min-width: 0; }
+.site-main .sidebar-area { width: 300px; flex-shrink: 0; }
+.site-footer { background: #222; color: #aaa; padding: 2rem 0; margin-top: 3rem; }
+.site-footer .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.site-footer a { color: #ccc; text-decoration: none; margin-left: 1.5rem; }
+.sample-post h2 { font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 0.5rem; color: #1A1A1A; }
+.sample-post .meta { font-size: 0.85rem; color: #777; margin-bottom: 1rem; }
+.sample-post p { font-size: 1.05rem; line-height: 1.75; margin-bottom: 1rem; color: #333; }
+.sample-post blockquote { border-left: 4px solid var(--color-primary); padding-left: 1rem; margin: 1.5rem 0; color: #555; font-style: italic; }
+.widget { background: #F4F6FA; border: 1px solid #E1E5EC; border-radius: 0.5rem; padding: 1.25rem; margin-bottom: 1.5rem; }
+.widget h3 { font-family: var(--font-heading); font-size: 1.1rem; margin-bottom: 0.75rem; color: #1A1A1A; }
+.widget ul { list-style: none; padding: 0; }
+.widget ul li { padding: 0.4rem 0; border-bottom: 1px solid #E1E5EC; }
+.widget ul li:last-child { border-bottom: none; }
+.widget ul li a { color: #1034A6; text-decoration: none; font-size: 0.9rem; }
+.widget ul li a:hover { text-decoration: underline; }
+.btn-primary { background: var(--color-primary); border-color: var(--color-primary); }
+</style>
+</head>
+<body>
+<header class="site-header">
+<div class="container">
+<a href="#" class="site-title" id="preview-site-title">My Site</a>
+<span class="site-tagline" id="preview-site-tagline">A short description of your site</span>
+<nav id="preview-nav">
+<a href="#">Home</a>
+<a href="#">Blog</a>
+<a href="#">About</a>
+<a href="#">Contact</a>
+</nav>
+</div>
+</header>
+<main class="site-main">
+<div class="main-content">
+<article class="sample-post">
+<h2>Welcome to Your New Site</h2>
+<div class="meta">Published July 17, 2026</div>
+<p>This is a sample page to preview your theme customizations. As you change colors, fonts, and other settings in the customizer panel, this preview updates in real time.</p>
+<blockquote>The design of your site should reflect your brand and personality. Use the customizer to make it your own.</blockquote>
+<p>Monsoon CMS gives you full control over every aspect of your site's appearance. Change the primary color, switch fonts, or adjust the sidebar background to match your vision.</p>
+<p>Try changing the settings on the left to see how they affect this preview. All changes are applied instantly via CSS custom properties.</p>
+</article>
+</div>
+<div class="sidebar-area">
+<div class="widget">
+<h3>Recent Posts</h3>
+<ul>
+<li><a href="#">Getting Started with Monsoon</a></li>
+<li><a href="#">Building Your First Theme</a></li>
+<li><a href="#">Block Editor Tips</a></li>
+<li><a href="#">Module Development Guide</a></li>
+</ul>
+</div>
+<div class="widget">
+<h3>Categories</h3>
+<ul>
+<li><a href="#">Tutorials</a></li>
+<li><a href="#">News</a></li>
+<li><a href="#">Development</a></li>
+</ul>
+</div>
+</div>
+</main>
+<footer class="site-footer">
+<div class="container">
+<span>&copy; 2026 <span id="preview-footer-name">My Site</span>. All rights reserved.</span>
+<div>
+<a href="#">Privacy</a>
+<a href="#">Terms</a>
+<a href="#">RSS</a>
+</div>
+</div>
+</footer>
+<script>
+(function() {
+    window.parent.postMessage({ type: 'customize-ready' }, '*');
+
+    window.addEventListener('message', function(e) {
+        if (!e.data || e.data.type !== 'customize-update') return;
+        var s = e.data.settings;
+        var root = document.documentElement;
+
+        if (s.primaryColor) root.style.setProperty('--color-primary', s.primaryColor);
+        if (s.sidebarColor) root.style.setProperty('--color-sidebar', s.sidebarColor);
+        if (s.backgroundColor) root.style.setProperty('--color-bg', s.backgroundColor);
+        if (s.bodyFont) root.style.setProperty('--font-body', s.bodyFont === 'Graphik' ? "'Graphik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" : s.bodyFont);
+        if (s.headingFont) root.style.setProperty('--font-heading', s.headingFont === 'Means' ? "'Means', Georgia, serif" : s.headingFont);
+
+        if (s.site_name !== undefined) {
+            var title = document.getElementById('preview-site-title');
+            if (title) title.textContent = s.site_name || 'My Site';
+            var footerName = document.getElementById('preview-footer-name');
+            if (footerName) footerName.textContent = s.site_name || 'My Site';
+        }
+        if (s.site_tagline !== undefined) {
+            var tagline = document.getElementById('preview-site-tagline');
+            if (tagline) tagline.textContent = s.site_tagline || '';
+        }
+
+        var header = document.querySelector('.site-header');
+        if (header && s.sidebarColor) header.style.background = s.sidebarColor;
+        var footer = document.querySelector('.site-footer');
+        if (footer && s.sidebarColor) footer.style.background = s.sidebarColor;
+    });
+})();
+</script>
+</body>
+</html>
+HTML;
+    }
+
+    private static function renderThemesPage(): string
+    {
+        $db = Database::getInstance()->getConnection();
+        $themeLoader = new ThemeLoader(dirname(__DIR__, 2) . '/themes', $db);
+        $availableThemes = $themeLoader->getAvailableThemes();
+        $activeThemeName = $themeLoader->getActiveThemeName();
+
+        $themeCards = '';
+        foreach ($availableThemes as $theme) {
+            $name = htmlspecialchars($theme['name'] ?? $theme['_name'] ?? '', ENT_QUOTES, 'UTF-8');
+            $slug = htmlspecialchars($theme['_name'] ?? '', ENT_QUOTES, 'UTF-8');
+            $version = htmlspecialchars($theme['version'] ?? '', ENT_QUOTES, 'UTF-8');
+            $description = htmlspecialchars($theme['description'] ?? '', ENT_QUOTES, 'UTF-8');
+            $author = htmlspecialchars($theme['author'] ?? '', ENT_QUOTES, 'UTF-8');
+            $isActive = $theme['_name'] === $activeThemeName;
+            $activeClass = $isActive ? ' border-success' : '';
+            $badge = $isActive ? '<span class="badge bg-success">Active</span>' : '';
+            $supports = $theme['supports'] ?? [];
+            $supportsList = '';
+            if (!empty($supports['blockTypes'])) {
+                foreach ($supports['blockTypes'] as $bt) {
+                    $btEsc = htmlspecialchars($bt, ENT_QUOTES, 'UTF-8');
+                    $supportsList .= "<span class=\"badge bg-light text-dark me-1\">{$btEsc}</span>";
+                }
+            }
+
+            $actions = '';
+            if ($isActive) {
+                $actions = '<a href="/manage/customize" class="btn btn-sm btn-outline-primary">Customize</a>';
+            } else {
+                $actions = '<button class="btn btn-sm btn-primary activate-theme-btn" data-theme="' . $slug . '" style="background-color:#1034A6;border-color:#1034A6;">Activate</button>';
+            }
+
+            $themeCards .= <<<HTML
+<div class="col-md-4 mb-4">
+<div class="card shadow-sm h-100{$activeClass}" id="theme-card-{$slug}">
+<div class="card-body d-flex flex-column">
+<div class="d-flex justify-content-between align-items-start mb-2">
+<h3 class="h6 mb-0 fw-semibold">{$name}</h3>
+{$badge}
+</div>
+<p class="text-muted small mb-2">v{$version} &middot; {$author}</p>
+<p class="small mb-3">{$description}</p>
+{($supportsList !== '' ? '<div class="mb-3">' . $supportsList . '</div>' : '')}
+<div class="mt-auto">{$actions}</div>
+</div>
+</div>
+</div>
+HTML;
+        }
+
+        if (empty($availableThemes)) {
+            $themeCards = '<div class="col-12"><p class="text-muted text-center py-4">No themes found.</p></div>';
+        }
+
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Themes - Monsoon CMS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+<div class="d-flex">
+<div class="sidebar" style="width: 250px;">
+<div class="brand">Monsoon CMS</div>
+<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/content" aria-label="Content">Content</a>
+<a href="/manage/media" aria-label="Media">Media</a>
+<a href="/manage/users" aria-label="Users">Users</a>
+<a href="/manage/roles" aria-label="Roles">Roles</a>
+<a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" class="active" aria-label="Themes" aria-current="page">Themes</a>
+<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
+</nav>
+</div>
+<div class="content flex-grow-1">
+<h1 class="h3 mb-4">Themes</h1>
+<div class="row" id="themes-grid">
+{$themeCards}
+</div>
+</div>
+</div>
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index:11" aria-live="polite"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/manage.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.activate-theme-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var themeName = this.dataset.theme;
+            if (!Monsoon.confirm('Activate this theme?')) return;
+            var btnEl = this;
+            Monsoon.setLoading(btnEl, true);
+            fetch('/api/v1/themes/' + encodeURIComponent(themeName) + '/activate', { method: 'POST' })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.data && data.data.theme) {
+                        Monsoon.toast('Theme activated.', 'success');
+                        window.location.reload();
+                    } else {
+                        Monsoon.toast(data.error?.message || 'Failed to activate theme.', 'danger');
+                    }
+                })
+                .catch(function() {
+                    Monsoon.toast('Network error.', 'danger');
+                })
+                .finally(function() {
+                    Monsoon.setLoading(btnEl, false);
+                });
+        });
+    });
+});
+</script>
+</body>
+</html>
+HTML;
+    }
+
+    private static function renderMenusPage(): string
+    {
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menus - Monsoon CMS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+<style>
+.menu-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: #fff; border: 1px solid #E1E5EC; border-radius: 0.25rem; margin-bottom: 0.25rem; cursor: move; }
+.menu-item:hover { border-color: #1034A6; }
+.menu-item .drag-handle { color: #aaa; cursor: grab; }
+.menu-item .item-label { flex: 1; font-size: 0.9rem; }
+.menu-item .remove-btn { background: none; border: none; color: #D33F3F; cursor: pointer; font-size: 1.1rem; padding: 0; line-height: 1; }
+.menu-item.sortable-ghost { opacity: 0.4; }
+</style>
+</head>
+<body>
+<div class="d-flex">
+<div class="sidebar" style="width: 250px;">
+<div class="brand">Monsoon CMS</div>
+<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/content" aria-label="Content">Content</a>
+<a href="/manage/media" aria-label="Media">Media</a>
+<a href="/manage/users" aria-label="Users">Users</a>
+<a href="/manage/roles" aria-label="Roles">Roles</a>
+<a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/menus" class="active" aria-label="Menus" aria-current="page">Menus</a>
+<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
+</nav>
+</div>
+<div class="content flex-grow-1">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h1 class="h3 mb-0">Menus</h1>
+<button class="btn btn-primary" id="create-menu-btn" style="background-color:#1034A6;border-color:#1034A6;" aria-label="Create new menu">New Menu</button>
+</div>
+<div class="card shadow-sm">
+<div class="card-body">
+<div class="table-responsive">
+<table class="table table-hover mb-0">
+<thead>
+<tr><th>Name</th><th>Location</th><th>Items</th><th></th></tr>
+</thead>
+<tbody id="menus-list">
+<tr><td colspan="4" class="text-center text-muted py-4">Loading...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="menu-modal" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title h5" id="menu-modal-title">Create Menu</h2>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="mb-3">
+<label for="menu-name" class="form-label fw-semibold">Menu Name</label>
+<input type="text" class="form-control" id="menu-name" placeholder="e.g. Main Navigation" required>
+</div>
+<div class="mb-3">
+<label for="menu-location" class="form-label fw-semibold">Location</label>
+<select class="form-select" id="menu-location">
+<option value="">None</option>
+<option value="primary">Primary</option>
+<option value="footer">Footer</option>
+<option value="social">Social</option>
+</select>
+</div>
+<hr>
+<div class="d-flex justify-content-between align-items-center mb-2">
+<label class="form-label fw-semibold mb-0">Menu Items</label>
+<button type="button" class="btn btn-sm btn-outline-primary" id="add-menu-item-btn">Add Item</button>
+</div>
+<div id="menu-items-list"></div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+<button type="button" class="btn btn-primary" id="save-menu-btn" style="background-color:#1034A6;border-color:#1034A6;" aria-label="Save menu">Save</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="menu-item-modal" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title h5" id="menu-item-modal-title">Add Menu Item</h2>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="mb-3">
+<label for="item-label" class="form-label fw-semibold">Label</label>
+<input type="text" class="form-control" id="item-label" placeholder="e.g. About Us" required>
+</div>
+<div class="mb-3">
+<label for="item-url" class="form-label fw-semibold">URL</label>
+<input type="text" class="form-control" id="item-url" placeholder="e.g. /about or https://example.com">
+</div>
+<div class="mb-3">
+<label for="item-type" class="form-label fw-semibold">Type</label>
+<select class="form-select" id="item-type">
+<option value="custom">Custom URL</option>
+<option value="page">Content Page</option>
+</select>
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+<button type="button" class="btn btn-primary" id="save-menu-item-btn" style="background-color:#1034A6;border-color:#1034A6;">Add</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index:11" aria-live="polite"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/manage.js"></script>
+<script>
+var editingMenuId = null;
+var menuModal = null;
+var menuItemModal = null;
+var currentMenuItems = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    menuModal = new bootstrap.Modal(document.getElementById('menu-modal'));
+    menuItemModal = new bootstrap.Modal(document.getElementById('menu-item-modal'));
+    loadMenus();
+
+    document.getElementById('create-menu-btn').addEventListener('click', function() {
+        editingMenuId = null;
+        currentMenuItems = [];
+        document.getElementById('menu-modal-title').textContent = 'Create Menu';
+        document.getElementById('menu-name').value = '';
+        document.getElementById('menu-location').value = '';
+        renderMenuItems();
+        menuModal.show();
+    });
+
+    document.getElementById('save-menu-btn').addEventListener('click', saveMenu);
+    document.getElementById('add-menu-item-btn').addEventListener('click', function() {
+        document.getElementById('item-label').value = '';
+        document.getElementById('item-url').value = '';
+        document.getElementById('item-type').value = 'custom';
+        menuItemModal.show();
+    });
+    document.getElementById('save-menu-item-btn').addEventListener('click', addMenuItem);
+});
+
+function loadMenus() {
+    fetch('/api/v1/menus')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var tbody = document.getElementById('menus-list');
+            if (!data.data || data.data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No menus yet. Create your first menu.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = data.data.map(function(menu) {
+                var itemCount = (menu.items || []).length;
+                var location = menu.location || '<span class="text-muted">None</span>';
+                return '<tr>' +
+                    '<td class="fw-semibold">' + Monsoon.escapeHtml(menu.name) + '</td>' +
+                    '<td>' + location + '</td>' +
+                    '<td>' + itemCount + ' items</td>' +
+                    '<td>' +
+                        '<button class="btn btn-sm btn-outline-secondary me-1" onclick="editMenu(\\'' + menu.id + '\\')">Edit</button>' +
+                        '<button class="btn btn-sm btn-outline-danger" onclick="deleteMenu(\\'' + menu.id + '\\')">Delete</button>' +
+                    '</td></tr>';
+            }).join('');
+        })
+        .catch(function() {
+            document.getElementById('menus-list').innerHTML = '<tr><td colspan="4" class="text-center text-danger py-4">Failed to load menus.</td></tr>';
+        });
+}
+
+function editMenu(id) {
+    fetch('/api/v1/menus')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var menu = (data.data || []).find(function(m) { return m.id === id; });
+            if (!menu) return;
+            editingMenuId = id;
+            currentMenuItems = menu.items || [];
+            document.getElementById('menu-modal-title').textContent = 'Edit Menu';
+            document.getElementById('menu-name').value = menu.name;
+            document.getElementById('menu-location').value = menu.location || '';
+            renderMenuItems();
+            menuModal.show();
+        });
+}
+
+function renderMenuItems() {
+    var container = document.getElementById('menu-items-list');
+    if (currentMenuItems.length === 0) {
+        container.innerHTML = '<p class="text-muted small">No items yet. Click "Add Item" to add menu items.</p>';
+        return;
+    }
+    container.innerHTML = currentMenuItems.map(function(item, index) {
+        return '<div class="menu-item" draggable="true" data-index="' + index + '">' +
+            '<span class="drag-handle" aria-hidden="true">&#9776;</span>' +
+            '<span class="item-label">' + Monsoon.escapeHtml(item.label || '') + ' <span class="text-muted small">(' + Monsoon.escapeHtml(item.url || '') + ')</span></span>' +
+            '<button type="button" class="remove-btn" onclick="removeMenuItem(' + index + ')" aria-label="Remove item">&times;</button>' +
+        '</div>';
+    }).join('');
+
+    container.querySelectorAll('.menu-item').forEach(function(el) {
+        el.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', el.dataset.index);
+            el.style.opacity = '0.5';
+        });
+        el.addEventListener('dragend', function() { el.style.opacity = '1'; });
+        el.addEventListener('dragover', function(e) { e.preventDefault(); });
+        el.addEventListener('drop', function(e) {
+            e.preventDefault();
+            var fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            var toIndex = parseInt(el.dataset.index);
+            if (fromIndex !== toIndex) {
+                var item = currentMenuItems.splice(fromIndex, 1)[0];
+                currentMenuItems.splice(toIndex, 0, item);
+                renderMenuItems();
+            }
+        });
+    });
+}
+
+function addMenuItem() {
+    var label = document.getElementById('item-label').value.trim();
+    var url = document.getElementById('item-url').value.trim();
+    var type = document.getElementById('item-type').value;
+    if (label === '') {
+        Monsoon.toast('Label is required.', 'danger');
+        return;
+    }
+    currentMenuItems.push({ label: label, url: url, type: type });
+    renderMenuItems();
+    menuItemModal.hide();
+}
+
+function removeMenuItem(index) {
+    currentMenuItems.splice(index, 1);
+    renderMenuItems();
+}
+
+function saveMenu() {
+    var name = document.getElementById('menu-name').value.trim();
+    if (name === '') {
+        Monsoon.toast('Menu name is required.', 'danger');
+        return;
+    }
+    var location = document.getElementById('menu-location').value || null;
+    var btn = document.getElementById('save-menu-btn');
+    Monsoon.setLoading(btn, true);
+
+    var isEdit = editingMenuId !== null;
+    var url = isEdit ? '/api/v1/menus/' + editingMenuId : '/api/v1/menus';
+    var method = isEdit ? 'PUT' : 'POST';
+
+    Monsoon.api(url, { method: method, body: { name: name, location: location, items: currentMenuItems } })
+        .then(function() {
+            Monsoon.toast(isEdit ? 'Menu updated.' : 'Menu created.', 'success');
+            menuModal.hide();
+            loadMenus();
+        })
+        .catch(function() {})
+        .finally(function() { Monsoon.setLoading(btn, false); });
+}
+
+function deleteMenu(id) {
+    if (!Monsoon.confirm('Delete this menu?')) return;
+    fetch('/api/v1/menus/' + id, { method: 'DELETE' })
+        .then(function(r) {
+            if (r.ok) {
+                Monsoon.toast('Menu deleted.', 'success');
+                loadMenus();
+            } else {
+                Monsoon.toast('Failed to delete menu.', 'danger');
+            }
+        })
+        .catch(function() { Monsoon.toast('Network error.', 'danger'); });
+}
+</script>
+</body>
+</html>
+HTML;
+    }
+
+    private static function renderWidgetsPage(): string
+    {
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Widgets - Monsoon CMS</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+<style>
+.widget-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem; background: #fff; border: 1px solid #E1E5EC; border-radius: 0.25rem; margin-bottom: 0.5rem; cursor: move; }
+.widget-item:hover { border-color: #1034A6; }
+.widget-item .drag-handle { color: #aaa; cursor: grab; }
+.widget-item .widget-info { flex: 1; }
+.widget-item .widget-info .widget-title { font-weight: 600; font-size: 0.9rem; }
+.widget-item .widget-info .widget-type { font-size: 0.75rem; color: #555555; }
+.widget-item .widget-actions { display: flex; gap: 0.25rem; }
+.widget-item.sortable-ghost { opacity: 0.4; }
+.area-section { border: 1px solid #E1E5EC; border-radius: 0.5rem; margin-bottom: 1rem; overflow: hidden; }
+.area-header { background: #F4F6FA; padding: 0.75rem 1rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+.area-body { padding: 0.75rem; }
+</style>
+</head>
+<body>
+<div class="d-flex">
+<div class="sidebar" style="width: 250px;">
+<div class="brand">Monsoon CMS</div>
+<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
+<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
+<a href="/manage/content" aria-label="Content">Content</a>
+<a href="/manage/media" aria-label="Media">Media</a>
+<a href="/manage/users" aria-label="Users">Users</a>
+<a href="/manage/roles" aria-label="Roles">Roles</a>
+<a href="/manage/settings" aria-label="Settings">Settings</a>
+<a href="/manage/menus" aria-label="Menus">Menus</a>
+<a href="/manage/widgets" class="active" aria-label="Widgets" aria-current="page">Widgets</a>
+<a href="/manage/customize" aria-label="Customize">Customize</a>
+<a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
+</nav>
+</div>
+<div class="content flex-grow-1">
+<div class="d-flex justify-content-between align-items-center mb-4">
+<h1 class="h3 mb-0">Widgets</h1>
+<button class="btn btn-primary" id="add-area-btn" style="background-color:#1034A6;border-color:#1034A6;" aria-label="Add widget area">New Area</button>
+</div>
+<div id="areas-container">
+<p class="text-center text-muted py-4">Loading...</p>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="area-modal" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title h5">New Widget Area</h2>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="mb-3">
+<label for="area-name" class="form-label fw-semibold">Area Name</label>
+<input type="text" class="form-control" id="area-name" placeholder="e.g. Sidebar" required>
+</div>
+<div class="mb-3">
+<label for="area-slug" class="form-label fw-semibold">Slug</label>
+<input type="text" class="form-control" id="area-slug" placeholder="e.g. sidebar">
+</div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+<button type="button" class="btn btn-primary" id="save-area-btn" style="background-color:#1034A6;border-color:#1034A6;">Create</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="widget-type-modal" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title h5">Add Widget</h2>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<p class="text-muted mb-3">Select a widget type:</p>
+<div class="d-grid gap-2">
+<button type="button" class="btn btn-outline-primary text-start" onclick="selectWidgetType('text')">Text / HTML</button>
+<button type="button" class="btn btn-outline-primary text-start" onclick="selectWidgetType('recent_posts')">Recent Posts</button>
+<button type="button" class="btn btn-outline-primary text-start" onclick="selectWidgetType('custom_html')">Custom HTML</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal fade" id="widget-edit-modal" tabindex="-1" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h2 class="modal-title h5" id="widget-edit-title">Edit Widget</h2>
+<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+<div class="mb-3">
+<label for="widget-title-input" class="form-label fw-semibold">Title</label>
+<input type="text" class="form-control" id="widget-title-input" placeholder="Widget title">
+</div>
+<div id="widget-settings-fields"></div>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+<button type="button" class="btn btn-primary" id="save-widget-btn" style="background-color:#1034A6;border-color:#1034A6;">Save</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index:11" aria-live="polite"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/manage.js"></script>
+<script>
+var areaModal = null;
+var widgetTypeModal = null;
+var widgetEditModal = null;
+var addingToAreaId = null;
+var editingWidgetId = null;
+var currentWidgetType = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    areaModal = new bootstrap.Modal(document.getElementById('area-modal'));
+    widgetTypeModal = new bootstrap.Modal(document.getElementById('widget-type-modal'));
+    widgetEditModal = new bootstrap.Modal(document.getElementById('widget-edit-modal'));
+    loadAreas();
+
+    document.getElementById('add-area-btn').addEventListener('click', function() {
+        document.getElementById('area-name').value = '';
+        document.getElementById('area-slug').value = '';
+        areaModal.show();
+    });
+    document.getElementById('save-area-btn').addEventListener('click', saveArea);
+    document.getElementById('save-widget-btn').addEventListener('click', saveWidget);
+});
+
+function loadAreas() {
+    fetch('/api/v1/widget-areas')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var container = document.getElementById('areas-container');
+            if (!data.data || data.data.length === 0) {
+                container.innerHTML = '<div class="card shadow-sm"><div class="card-body text-center text-muted py-4">No widget areas yet. Create your first area.</div></div>';
+                return;
+            }
+            container.innerHTML = data.data.map(function(area) {
+                return '<div class="area-section" id="area-' + area.id + '">' +
+                    '<div class="area-header">' +
+                        '<span>' + Monsoon.escapeHtml(area.name) + ' <small class="text-muted">(' + Monsoon.escapeHtml(area.slug) + ')</small></span>' +
+                        '<button class="btn btn-sm btn-outline-primary" onclick="openAddWidget(\\'' + area.id + '\\')">Add Widget</button>' +
+                    '</div>' +
+                    '<div class="area-body" id="widgets-' + area.id + '">' +
+                        '<p class="text-muted small mb-0">Loading widgets...</p>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+            data.data.forEach(function(area) { loadWidgets(area.id); });
+        })
+        .catch(function() {
+            document.getElementById('areas-container').innerHTML = '<p class="text-center text-danger py-4">Failed to load widget areas.</p>';
+        });
+}
+
+function loadWidgets(areaId) {
+    fetch('/api/v1/widget-areas/' + areaId + '/widgets')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var container = document.getElementById('widgets-' + areaId);
+            if (!data.data || data.data.length === 0) {
+                container.innerHTML = '<p class="text-muted small mb-0">No widgets in this area.</p>';
+                return;
+            }
+            container.innerHTML = data.data.map(function(w) {
+                var settings = w.settings || {};
+                var extra = '';
+                if (w.type === 'text' && settings.content) {
+                    extra = '<div class="text-muted small mt-1">' + Monsoon.escapeHtml(settings.content.substring(0, 80)) + (settings.content.length > 80 ? '...' : '') + '</div>';
+                } else if (w.type === 'recent_posts') {
+                    extra = '<div class="text-muted small mt-1">Show ' + Monsoon.escapeHtml(String(settings.count || 5)) + ' posts</div>';
+                } else if (w.type === 'custom_html' && settings.html) {
+                    extra = '<div class="text-muted small mt-1">' + Monsoon.escapeHtml(settings.html.substring(0, 80)) + (settings.html.length > 80 ? '...' : '') + '</div>';
+                }
+                return '<div class="widget-item" draggable="true" data-id="' + w.id + '" data-area="' + areaId + '">' +
+                    '<span class="drag-handle" aria-hidden="true">&#9776;</span>' +
+                    '<div class="widget-info">' +
+                        '<div class="widget-title">' + Monsoon.escapeHtml(w.title || w.type) + '</div>' +
+                        '<div class="widget-type">' + Monsoon.escapeHtml(w.type) + '</div>' +
+                        extra +
+                    '</div>' +
+                    '<div class="widget-actions">' +
+                        '<button class="btn btn-sm btn-outline-secondary" onclick="editWidget(\\'' + w.id + '\\', \\'' + areaId + '\\')">Edit</button>' +
+                        '<button class="btn btn-sm btn-outline-danger" onclick="deleteWidget(\\'' + w.id + '\\', \\'' + areaId + '\\')">&#215;</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+
+            container.querySelectorAll('.widget-item').forEach(function(el) {
+                el.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', el.dataset.id);
+                    el.style.opacity = '0.5';
+                });
+                el.addEventListener('dragend', function() { el.style.opacity = '1'; });
+                el.addEventListener('dragover', function(e) { e.preventDefault(); });
+                el.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    var draggedId = e.dataTransfer.getData('text/plain');
+                    if (draggedId !== el.dataset.id) {
+                        var items = container.querySelectorAll('.widget-item');
+                        var ids = Array.from(items).map(function(i) { return i.dataset.id; });
+                        var fromIdx = ids.indexOf(draggedId);
+                        var toIdx = ids.indexOf(el.dataset.id);
+                        if (fromIdx !== -1 && toIdx !== -1) {
+                            Monsoon.api('/api/v1/widgets/' + draggedId, { method: 'PUT', body: { order: toIdx } })
+                                .then(function() { loadWidgets(areaId); });
+                        }
+                    }
+                });
+            });
+        });
+}
+
+function saveArea() {
+    var name = document.getElementById('area-name').value.trim();
+    var slug = document.getElementById('area-slug').value.trim();
+    if (name === '' || slug === '') {
+        Monsoon.toast('Name and slug are required.', 'danger');
+        return;
+    }
+    var btn = document.getElementById('save-area-btn');
+    Monsoon.setLoading(btn, true);
+    Monsoon.api('/api/v1/widget-areas', { method: 'POST', body: { name: name, slug: slug } })
+        .then(function() {
+            Monsoon.toast('Area created.', 'success');
+            areaModal.hide();
+            loadAreas();
+        })
+        .catch(function() {})
+        .finally(function() { Monsoon.setLoading(btn, false); });
+}
+
+function openAddWidget(areaId) {
+    addingToAreaId = areaId;
+    widgetTypeModal.show();
+}
+
+function selectWidgetType(type) {
+    widgetTypeModal.hide();
+    editingWidgetId = null;
+    currentWidgetType = type;
+    document.getElementById('widget-edit-title').textContent = 'Add ' + type.replace(/_/g, ' ');
+    document.getElementById('widget-title-input').value = '';
+    renderWidgetFields(type, {});
+    widgetEditModal.show();
+}
+
+function renderWidgetFields(type, settings) {
+    var container = document.getElementById('widget-settings-fields');
+    if (type === 'text') {
+        container.innerHTML = '<div class="mb-3"><label for="widget-content" class="form-label fw-semibold">Content</label><textarea class="form-control" id="widget-content" rows="4" placeholder="Enter text content">' + Monsoon.escapeHtml(settings.content || '') + '</textarea></div>';
+    } else if (type === 'recent_posts') {
+        container.innerHTML = '<div class="mb-3"><label for="widget-count" class="form-label fw-semibold">Number of posts</label><input type="number" class="form-control" id="widget-count" value="' + Monsoon.escapeHtml(String(settings.count || 5)) + '" min="1" max="20"></div>';
+    } else if (type === 'custom_html') {
+        container.innerHTML = '<div class="mb-3"><label for="widget-html" class="form-label fw-semibold">HTML Code</label><textarea class="form-control" id="widget-html" rows="6" placeholder="Enter HTML">' + Monsoon.escapeHtml(settings.html || '') + '</textarea></div>';
+    } else {
+        container.innerHTML = '<p class="text-muted">No settings for this widget type.</p>';
+    }
+}
+
+function editWidget(widgetId, areaId) {
+    fetch('/api/v1/widget-areas/' + areaId + '/widgets')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var widget = (data.data || []).find(function(w) { return w.id === widgetId; });
+            if (!widget) return;
+            editingWidgetId = widgetId;
+            addingToAreaId = areaId;
+            currentWidgetType = widget.type;
+            document.getElementById('widget-edit-title').textContent = 'Edit ' + widget.type.replace(/_/g, ' ');
+            document.getElementById('widget-title-input').value = widget.title || '';
+            renderWidgetFields(widget.type, widget.settings || {});
+            widgetEditModal.show();
+        });
+}
+
+function saveWidget() {
+    var title = document.getElementById('widget-title-input').value.trim();
+    var settings = {};
+    var contentEl = document.getElementById('widget-content');
+    var countEl = document.getElementById('widget-count');
+    var htmlEl = document.getElementById('widget-html');
+
+    if (contentEl) settings.content = contentEl.value;
+    if (countEl) settings.count = parseInt(countEl.value) || 5;
+    if (htmlEl) settings.html = htmlEl.value;
+
+    var btn = document.getElementById('save-widget-btn');
+    Monsoon.setLoading(btn, true);
+
+    var isEdit = editingWidgetId !== null;
+    var url = isEdit ? '/api/v1/widgets/' + editingWidgetId : '/api/v1/widgets';
+    var method = isEdit ? 'PUT' : 'POST';
+    var body = isEdit ? { title: title, settings: settings } : { area_id: addingToAreaId, type: currentWidgetType, title: title, settings: settings, order: 0 };
+
+    Monsoon.api(url, { method: method, body: body })
+        .then(function() {
+            Monsoon.toast(isEdit ? 'Widget updated.' : 'Widget added.', 'success');
+            widgetEditModal.hide();
+            loadWidgets(addingToAreaId);
+        })
+        .catch(function() {})
+        .finally(function() { Monsoon.setLoading(btn, false); });
+}
+
+function deleteWidget(widgetId, areaId) {
+    if (!Monsoon.confirm('Delete this widget?')) return;
+    fetch('/api/v1/widgets/' + widgetId, { method: 'DELETE' })
+        .then(function(r) {
+            if (r.ok) {
+                Monsoon.toast('Widget deleted.', 'success');
+                loadWidgets(areaId);
+            } else {
+                Monsoon.toast('Failed to delete widget.', 'danger');
+            }
+        })
+        .catch(function() { Monsoon.toast('Network error.', 'danger'); });
+}
+</script>
 </body>
 </html>
 HTML;

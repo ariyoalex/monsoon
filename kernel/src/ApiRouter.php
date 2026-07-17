@@ -507,5 +507,99 @@ final class ApiRouter
 
             return Response::empty(204);
         });
+
+        // ==================== THEMES ====================
+
+        $router->addRoute('POST', '/api/v1/themes/{name}/activate', function (array $params) use ($db) {
+            $themeLoader = new ThemeLoader(dirname(__DIR__, 2) . '/themes', $db);
+            $themeLoader->setActiveTheme($params['name']);
+            ThemeHooks::getInstance()->doAction('theme:settings:saved');
+            return Response::json(['data' => ['theme' => $params['name'], 'message' => 'Theme activated']]);
+        });
+
+        // ==================== MENUS ====================
+
+        $menuService = new MenuService($db);
+
+        $router->addRoute('GET', '/api/v1/menus', function () use ($menuService) {
+            $menus = $menuService->getAll();
+            return Response::json(['data' => $menus]);
+        });
+
+        $router->addRoute('POST', '/api/v1/menus', function () use ($menuService) {
+            $data = (new Request())->json();
+            if (empty($data['name'])) {
+                return Response::error(422, 'Menu name is required.');
+            }
+            $menu = $menuService->create($data);
+            return Response::json(['data' => $menu], 201);
+        });
+
+        $router->addRoute('PUT', '/api/v1/menus/{id}', function (array $params) use ($menuService) {
+            $data = (new Request())->json();
+            $menu = $menuService->update($params['id'], $data);
+            if ($menu === null) {
+                return Response::error(404, 'Menu not found.');
+            }
+            return Response::json(['data' => $menu]);
+        });
+
+        $router->addRoute('DELETE', '/api/v1/menus/{id}', function (array $params) use ($menuService) {
+            $deleted = $menuService->delete($params['id']);
+            if (!$deleted) {
+                return Response::error(404, 'Menu not found.');
+            }
+            return Response::empty(204);
+        });
+
+        // ==================== WIDGETS ====================
+
+        $widgetService = new WidgetService($db);
+
+        $router->addRoute('GET', '/api/v1/widget-areas', function () use ($widgetService) {
+            $theme = $_GET['theme'] ?? 'starter';
+            $areas = $widgetService->getAreas($theme);
+            return Response::json(['data' => $areas]);
+        });
+
+        $router->addRoute('POST', '/api/v1/widget-areas', function () use ($widgetService) {
+            $data = (new Request())->json();
+            if (empty($data['name']) || empty($data['slug'])) {
+                return Response::error(422, 'Name and slug are required.');
+            }
+            $area = $widgetService->createArea($data);
+            return Response::json(['data' => $area], 201);
+        });
+
+        $router->addRoute('GET', '/api/v1/widget-areas/{id}/widgets', function (array $params) use ($widgetService) {
+            $widgets = $widgetService->getWidgets($params['id']);
+            return Response::json(['data' => $widgets]);
+        });
+
+        $router->addRoute('POST', '/api/v1/widgets', function () use ($widgetService) {
+            $data = (new Request())->json();
+            if (empty($data['area_id']) || empty($data['type'])) {
+                return Response::error(422, 'area_id and type are required.');
+            }
+            $widget = $widgetService->createWidget($data);
+            return Response::json(['data' => $widget], 201);
+        });
+
+        $router->addRoute('PUT', '/api/v1/widgets/{id}', function (array $params) use ($widgetService) {
+            $data = (new Request())->json();
+            $widget = $widgetService->updateWidget($params['id'], $data);
+            if ($widget === null) {
+                return Response::error(404, 'Widget not found.');
+            }
+            return Response::json(['data' => $widget]);
+        });
+
+        $router->addRoute('DELETE', '/api/v1/widgets/{id}', function (array $params) use ($widgetService) {
+            $deleted = $widgetService->deleteWidget($params['id']);
+            if (!$deleted) {
+                return Response::error(404, 'Widget not found.');
+            }
+            return Response::empty(204);
+        });
     }
 }
