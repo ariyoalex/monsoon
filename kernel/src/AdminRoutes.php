@@ -273,6 +273,9 @@ HTML;
     {
         $userEmail = htmlspecialchars($user['email'] ?? 'Unknown', ENT_QUOTES, 'UTF-8');
 
+
+        $sidebar = self::renderSidebar('dashboard');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -285,26 +288,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-        <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard" aria-current="page">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/menus" aria-label="Menus">Menus</a>
-<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <div class="d-flex justify-content-between align-items-center mb-4">
 <h1 class="h3">Dashboard</h1>
@@ -347,6 +331,9 @@ HTML;
 
     private static function renderContentList(): string
     {
+
+        $sidebar = self::renderSidebar('content');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -363,26 +350,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-        <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" class="active" aria-label="Content" aria-current="page">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/menus" aria-label="Menus">Menus</a>
-<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <div class="d-flex justify-content-between align-items-center mb-4">
 <h1 class="h3 mb-0">Content</h1>
@@ -471,6 +439,9 @@ HTML;
             $bodyJson = '[]';
         }
 
+
+        $sidebar = self::renderSidebar('content');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -483,26 +454,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-        <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" class="active" aria-label="Content" aria-current="page">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/menus" aria-label="Menus">Menus</a>
-<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <div class="d-flex justify-content-between align-items-center mb-4">
 <h1 class="h3 mb-0">{$pageTitle}</h1>
@@ -647,6 +599,9 @@ HTML;
 
     private static function renderMediaPage(): string
     {
+
+        $sidebar = self::renderSidebar('media');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -672,26 +627,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-        <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" class="active" aria-label="Media" aria-current="page">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/menus" aria-label="Menus">Menus</a>
-<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <h1 class="h3 mb-4">Media Library</h1>
 <div class="card shadow-sm mb-4">
@@ -915,6 +851,9 @@ HTML;
 
     private static function renderUsersPage(): string
     {
+
+        $sidebar = self::renderSidebar('users');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -927,26 +866,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" class="active" aria-label="Users" aria-current="page">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/menus" aria-label="Menus">Menus</a>
-<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <h1 class="h3 mb-4">Users</h1>
 <div class="card shadow-sm">
@@ -994,6 +914,9 @@ HTML;
 
     private static function renderSettingsPage(): string
     {
+
+        $sidebar = self::renderSidebar('settings');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -1006,26 +929,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" class="active" aria-label="Settings" aria-current="page">Settings</a>
-<a href="/manage/menus" aria-label="Menus">Menus</a>
-<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <h1 class="h3 mb-4">Settings</h1>
 <div class="card shadow-sm">
@@ -1142,6 +1046,9 @@ HTML;
 
     private static function renderRolesPage(): string
     {
+
+        $sidebar = self::renderSidebar('roles');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -1157,26 +1064,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" class="active" aria-label="Roles" aria-current="page">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/menus" aria-label="Menus">Menus</a>
-<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <div class="d-flex justify-content-between align-items-center mb-4">
 <h1 class="h3 mb-0">Roles</h1>
@@ -1727,8 +1615,54 @@ HTML;
 HTML;
     }
 
+    /**
+     * Render the canonical admin sidebar navigation.
+     * Every admin page must use this so the nav stays complete and consistent.
+     * @param string $active One of: dashboard, content, media, users, roles, settings, menus, widgets, customize, themes, seo, forms, security, backup
+     */
+    private static function renderSidebar(string $active): string
+    {
+        $items = [
+            'dashboard' => 'Dashboard',
+            'content'  => 'Content',
+            'media'    => 'Media',
+            'users'    => 'Users',
+            'roles'    => 'Roles',
+            'settings' => 'Settings',
+            'menus'    => 'Menus',
+            'widgets'  => 'Widgets',
+            'customize'=> 'Customize',
+            'themes'   => 'Themes',
+            'seo'      => 'SEO',
+            'forms'    => 'Forms',
+            'security' => 'Security',
+            'backup'   => 'Backup',
+        ];
+
+        $links = '';
+        foreach ($items as $key => $label) {
+            $isActive = $key === $active;
+            $attrs = $isActive
+                ? ' class="active" aria-label="' . $label . '" aria-current="page"'
+                : ' aria-label="' . $label . '"';
+            $links .= '<a href="/manage/' . $key . '"' . $attrs . '>' . $label . '</a>' . "\n";
+        }
+
+        return <<<HTML
+<div class="sidebar" style="width: 250px;">
+<div class="brand">Monsoon CMS</div>
+<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
+{$links}<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
+</nav>
+</div>
+HTML;
+    }
+
     private static function renderCustomizerPage(): string
     {
+
+        $sidebar = self::renderSidebar('customize');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -1751,24 +1685,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/customize" class="active" aria-label="Customize" aria-current="page">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1 p-0">
 <div class="d-flex justify-content-between align-items-center mb-0 px-3 py-2 border-bottom bg-white">
 <div class="d-flex align-items-center gap-3">
@@ -2112,6 +2029,9 @@ HTML;
             $themeCards = '<div class="col-12"><p class="text-muted text-center py-4">No themes found.</p></div>';
         }
 
+
+        $sidebar = self::renderSidebar('themes');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -2124,24 +2044,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" class="active" aria-label="Themes" aria-current="page">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <h1 class="h3 mb-4">Themes</h1>
 <div class="row" id="themes-grid">
@@ -2187,6 +2090,9 @@ HTML;
 
     private static function renderMenusPage(): string
     {
+
+        $sidebar = self::renderSidebar('menus');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -2207,21 +2113,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/menus" class="active" aria-label="Menus" aria-current="page">Menus</a>
-<a href="/manage/widgets" aria-label="Widgets">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <div class="d-flex justify-content-between align-items-center mb-4">
 <h1 class="h3 mb-0">Menus</h1>
@@ -2486,6 +2378,9 @@ HTML;
 
     private static function renderWidgetsPage(): string
     {
+
+        $sidebar = self::renderSidebar('widgets');
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -2511,26 +2406,7 @@ HTML;
 </head>
 <body>
 <div class="d-flex">
-<div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
-<nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
-<a href="/manage/dashboard" aria-label="Dashboard">Dashboard</a>
-<a href="/manage/content" aria-label="Content">Content</a>
-<a href="/manage/media" aria-label="Media">Media</a>
-<a href="/manage/users" aria-label="Users">Users</a>
-<a href="/manage/roles" aria-label="Roles">Roles</a>
-<a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/menus" aria-label="Menus">Menus</a>
-<a href="/manage/widgets" class="active" aria-label="Widgets" aria-current="page">Widgets</a>
-<a href="/manage/customize" aria-label="Customize">Customize</a>
-<a href="/manage/themes" aria-label="Themes">Themes</a>
-<a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
-<a href="/manage/security" aria-label="Security">Security</a>
-<a href="/manage/backup" aria-label="Backup">Backup</a>
-<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
-</nav>
-</div>
+{$sidebar}
 <div class="content flex-grow-1">
 <div class="d-flex justify-content-between align-items-center mb-4">
 <h1 class="h3 mb-0">Widgets</h1>

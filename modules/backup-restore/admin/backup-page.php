@@ -27,12 +27,12 @@ function renderBackupPage(): string
 <a href="/manage/users" aria-label="Users">Users</a>
 <a href="/manage/roles" aria-label="Roles">Roles</a>
 <a href="/manage/settings" aria-label="Settings">Settings</a>
-<a href="/manage/forms" aria-label="Forms">Forms</a>
 <a href="/manage/menus" aria-label="Menus">Menus</a>
 <a href="/manage/widgets" aria-label="Widgets">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
 <a href="/manage/security" aria-label="Security">Security</a>
 <a href="/manage/backup" class="active" aria-label="Backup" aria-current="page">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
