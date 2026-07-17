@@ -6,8 +6,11 @@ namespace Monsoon\Kernel;
 
 final class AdminRoutes
 {
-    public static function register(Router $router, array $config): void
+    private static ?AssetService $assetService = null;
+
+    public static function register(Router $router, array $config, ?AssetService $assetService = null): void
     {
+        self::$assetService = $assetService;
         $router->addRoute('GET', '/', function () {
             return Response::html(self::renderLandingPage());
         });
@@ -1440,9 +1443,28 @@ blocks.forEach(block => {
 HTML;
     }
 
+    private static function getCssBundle(): string
+    {
+        if (self::$assetService === null) {
+            return '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">';
+        }
+        return self::$assetService->getStyleHtml();
+    }
+
+    private static function getJsBundle(bool $inFooter = true): string
+    {
+        if (self::$assetService === null) {
+            return '';
+        }
+        return self::$assetService->getScriptHtml($inFooter);
+    }
+
     private static function renderLandingPage(): string
     {
         $logoSvg = file_get_contents(__DIR__ . '/../../public/images/logos/isolated-layout.svg');
+        $cssBundle = self::getCssBundle();
+        $jsBundle = self::getJsBundle(false);
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -1452,8 +1474,7 @@ HTML;
 <title>Monsoon CMS — Open Source Content Management</title>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/admin.css">
-<link rel="stylesheet" href="/landing.css">
+{$cssBundle}
 </head>
 <body class="landing-page">
 <!-- Navigation -->
@@ -1524,30 +1545,30 @@ HTML;
 <div class="col-md-4">
 <div class="feature-card">
 <div class="feature-icon">&#128268;</div>
-<h3>Plugin System</h3>
-<p>Hooks and filters everywhere. Extend any part of the system — content pipeline, admin UI, REST API, or front-end rendering.</p>
+<h3>Block Editor</h3>
+<p>Drag-to-reorder blocks, slash commands, auto-save, undo/redo. Build pages visually without writing code.</p>
 </div>
 </div>
 </div>
 </div>
 </section>
 
-<!-- Performance Stats -->
-<section id="performance" class="py-5 bg-dark text-white">
-<div class="container text-center">
-<h2 class="section-title mb-5">Performance First</h2>
-<div class="row g-4">
-<div class="col-md-3">
-<div class="stat-number">&lt;2s</div>
-<div class="stat-label">Page Load on Shared Hosting</div>
-</div>
-<div class="col-md-3">
-<div class="stat-number">&lt;1s</div>
-<div class="stat-label">Content Save Time</div>
-</div>
+<!-- Performance -->
+<section id="performance" class="py-5 bg-light">
+<div class="container">
+<h2 class="section-title text-center mb-5">Performance by Default</h2>
+<div class="row g-4 text-center">
 <div class="col-md-3">
 <div class="stat-number">0</div>
 <div class="stat-label">jQuery Dependencies</div>
+</div>
+<div class="col-md-3">
+<div class="stat-number">100%</div>
+<div class="stat-label">Vanilla JavaScript</div>
+</div>
+<div class="col-md-3">
+<div class="stat-number">100%</div>
+<div class="stat-label">Vanilla JavaScript</div>
 </div>
 <div class="col-md-3">
 <div class="stat-number">100%</div>
@@ -1567,6 +1588,48 @@ HTML;
   "name": "monsoon/comments",
   "version": "1.0.0",
   "permissions": [
+    "comments.read",
+    "comments.moderate"
+  ],
+  "routes": {
+    "/api/v1/comments": "CommentsApiController"
+  },
+  "blocks": {
+    "comment-form": "CommentFormBlock"
+  }
+}</code></pre>
+</div>
+<div class="col-lg-6">
+<h3>One manifest. Full control.</h3>
+<p class="lead">Each module declares its permissions, routes, and blocks in a simple JSON manifest. Monsoon handles the rest — registration, gating, and lifecycle.</</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 bg-primary text-white">
+<div class="container text-center">
+<h2>Ready to build?</h2>
+<p class="lead mb-4">Monsoon is free and open source. Start building your next project today.</</p>
+<a href="/manage/install" class="btn btn-light btn-lg">Install Monsoon</a>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="py-4 bg-dark text-white">
+<div class="container text-center">
+<p class="mb-0">&copy; 2026 Monsoon CMS. Open source under the GPL v3.</p>
+</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{$jsBundle}
+</body>
+</html>
+HTML;
+    }
+
+    /**
+     * Render the canonical admin sidebar navigation.
     "comments.read",
     "comments.moderate"
   ],
@@ -1609,6 +1672,7 @@ HTML;
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{$jsBundle}
 </body>
 </html>
 HTML;

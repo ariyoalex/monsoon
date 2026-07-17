@@ -12,6 +12,7 @@ final class Kernel
     private PermissionGate $permissionGate;
     private MiddlewarePipeline $middlewarePipeline;
     private PageCache $pageCache;
+    private AssetService $assetService;
 
     public function __construct(array $config)
     {
@@ -35,7 +36,17 @@ final class Kernel
         $cacheTtl = (int)($config['CACHE_TTL'] ?? 3600);
         $this->pageCache = new PageCache($cacheDir, $cacheTtl);
 
-        AdminRoutes::register($this->router, $this->config);
+        $assetCacheDir = $config['ASSET_CACHE_DIR'] ?? dirname(__DIR__, 2) . '/cache/asset';
+        $assetUrlBase = $config['ASSET_URL_BASE'] ?? '/';
+        $assetVersion = $config['ASSET_VERSION'] ?? '1.0.0';
+        $this->assetService = new AssetService(
+            dirname(__DIR__, 2) . '/public',
+            $assetCacheDir,
+            $assetUrlBase,
+            $assetVersion
+        );
+
+        AdminRoutes::register($this->router, $this->config, $this->assetService);
     }
 
     public function handle(): void
@@ -133,5 +144,10 @@ final class Kernel
     public function getPageCache(): PageCache
     {
         return $this->pageCache;
+    }
+
+    public function getAssetService(): AssetService
+    {
+        return $this->assetService;
     }
 }
