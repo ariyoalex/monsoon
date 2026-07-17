@@ -116,8 +116,7 @@ final class Router
 
     private function patternToRegex(string $pattern): string
     {
-        $regex = preg_replace('/\{slug\}/', '([a-z0-9-]+)', $pattern);
-        $regex = preg_replace('/\{([a-zA-Z]+)\}/', '([a-f0-9-]{36})', $regex);
+        $regex = preg_replace('/\{([a-zA-Z]+)\}/', '(?<$1>[a-zA-Z0-9-]+)', $pattern);
 
         return '/^' . str_replace('/', '\/', $regex) . '$/';
     }

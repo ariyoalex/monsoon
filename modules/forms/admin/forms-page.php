@@ -40,7 +40,6 @@ function renderFormsPage(): string
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
 <a href="/manage/seo" aria-label="SEO">SEO</a>
-<a href="/manage/forms" class="active" aria-label="Forms" aria-current="page">Forms</a>
 <a href="/manage/security" aria-label="Security">Security</a>
 <a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>

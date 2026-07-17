@@ -55,7 +55,8 @@ final class BackupService
         $stmt = $this->db->prepare(
             'INSERT INTO backups (id, name, type, status, notes, created_at) VALUES (?, ?, ?, ?, ?, ?)'
         );
-        $stmt->bind_param('ssssss', $id, $name, $type, $pending = 'pending', $notes, $now);
+        $pending = 'pending';
+        $stmt->bind_param('ssssss', $id, $name, $type, $pending, $notes, $now);
         $stmt->execute();
         $stmt->close();
 
@@ -192,7 +193,9 @@ final class BackupService
         $stmt = $this->db->prepare(
             'UPDATE backups SET file_path = ?, file_size = ?, db_tables_count = ?, db_rows_count = ?, status = ?, completed_at = NOW() WHERE id = ?'
         );
-        $stmt->bind_param('siisss', $sqlFile, $fileSize, $tablesCount = count($tables), $totalRows, $completed = 'completed', $backupId);
+        $tablesCount = count($tables);
+        $completed = 'completed';
+        $stmt->bind_param('siisss', $sqlFile, $fileSize, $tablesCount, $totalRows, $completed, $backupId);
         $stmt->execute();
         $stmt->close();
 
@@ -227,7 +230,8 @@ final class BackupService
         $stmt = $this->db->prepare(
             'UPDATE backups SET file_path = ?, file_size = ?, status = ?, completed_at = NOW() WHERE id = ?'
         );
-        $stmt->bind_param('sis', $zipPath, $fileSize, $completed = 'completed', $backupId);
+        $completed = 'completed';
+        $stmt->bind_param('sis', $zipPath, $fileSize, $completed, $backupId);
         $stmt->execute();
         $stmt->close();
 
@@ -326,7 +330,8 @@ final class BackupService
             'UPDATE backups SET file_size = ?, type = ?, status = ?, completed_at = NOW() WHERE id = ?'
         );
         $fullType = 'full';
-        $stmt->bind_param('isss', $totalSize, $fullType, $completed = 'completed', $id);
+        $completed = 'completed';
+        $stmt->bind_param('isss', $totalSize, $fullType, $completed, $id);
         $stmt->execute();
         $stmt->close();
 

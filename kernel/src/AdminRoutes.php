@@ -2088,6 +2088,8 @@ HTML;
                 $actions = '<button class="btn btn-sm btn-primary activate-theme-btn" data-theme="' . $slug . '" style="background-color:#1034A6;border-color:#1034A6;">Activate</button>';
             }
 
+            $supportsBlock = $supportsList !== '' ? '<div class="mb-3">' . $supportsList . '</div>' : '';
+
             $themeCards .= <<<HTML
 <div class="col-md-4 mb-4">
 <div class="card shadow-sm h-100{$activeClass}" id="theme-card-{$slug}">
@@ -2098,7 +2100,7 @@ HTML;
 </div>
 <p class="text-muted small mb-2">v{$version} &middot; {$author}</p>
 <p class="small mb-3">{$description}</p>
-{($supportsList !== '' ? '<div class="mb-3">' . $supportsList . '</div>' : '')}
+{$supportsBlock}
 <div class="mt-auto">{$actions}</div>
 </div>
 </div>

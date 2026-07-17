@@ -157,20 +157,18 @@ final class ModuleLoader
                     $adminFile = $modulePath . '/admin/' . basename($route) . '.php';
                 }
                 $adminPath = $adminFile;
-                $this->router->addRoute('GET', $route, function () use ($adminPath, $slug) {
+                $nsPart = $moduleClasses[$slug][1] ?? ucfirst(str_replace('-', '', $slug));
+                $this->router->addRoute('GET', $route, function () use ($adminPath, $slug, $nsPart, $route) {
                     if (is_file($adminPath)) {
                         ob_start();
                         require $adminPath;
                         $output = ob_get_clean();
 
-                        $funcName = null;
-                        if (str_contains(basename($adminPath), 'forms')) {
-                            $funcName = 'renderFormsPage';
-                        } elseif (str_contains(basename($adminPath), 'backup')) {
-                            $funcName = 'renderBackupPage';
-                        }
+                        $base = basename($adminPath);
+                        $pageKey = preg_replace('/[^a-z0-9]/i', '', ucwords(str_replace('-', ' ', basename($route))));
+                        $funcName = "Monsoon\\Modules\\{$nsPart}\\render{$pageKey}Page";
 
-                        if ($funcName && function_exists($funcName)) {
+                        if (function_exists($funcName)) {
                             $output = $funcName();
                         }
 
