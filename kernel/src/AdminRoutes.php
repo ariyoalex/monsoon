@@ -220,13 +220,14 @@ final class AdminRoutes
 
         $csrfField = CsrfMiddleware::field();
 
-        return <<<HTML
+return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Login - Monsoon CMS</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/admin.css">
 <style>
@@ -262,10 +263,6 @@ body { display: flex; align-items: center; min-height: 100vh; }
 </div>
 </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/manage.js"></script>
-</body>
-</html>
 HTML;
     }
 
@@ -1445,6 +1442,7 @@ HTML;
 
     private static function renderLandingPage(): string
     {
+        $logoSvg = file_get_contents(__DIR__ . '/../../public/images/logos/isolated-layout.svg');
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -1452,6 +1450,7 @@ HTML;
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Monsoon CMS — Open Source Content Management</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/admin.css">
 <link rel="stylesheet" href="/landing.css">
@@ -1460,7 +1459,7 @@ HTML;
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark landing-nav">
 <div class="container">
-<a class="navbar-brand fw-bold" href="/">Monsoon</a>
+<a class="navbar-brand fw-bold" href="/"><svg class="landing-logo" viewBox="0 0 300 300">{$logoSvg}</svg><span class="ms-2">Monsoon</span></a>
 <div class="navbar-nav ms-auto">
 <a class="nav-link" href="#features">Features</a>
 <a class="nav-link" href="#modules">Modules</a>
@@ -1648,9 +1647,11 @@ HTML;
             $links .= '<a href="/manage/' . $key . '"' . $attrs . '>' . $label . '</a>' . "\n";
         }
 
+        $logoSvg = file_get_contents(__DIR__ . '/../../public/images/logos/default-monochrome-white.svg');
+
         return <<<HTML
 <div class="sidebar" style="width: 250px;">
-<div class="brand">Monsoon CMS</div>
+<div class="brand"><a href="/manage/dashboard" aria-label="Monsoon CMS Home">{$logoSvg}</a></div>
 <nav class="mt-3 px-2" role="navigation" aria-label="Admin navigation">
 {$links}<a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>

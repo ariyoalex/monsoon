@@ -4,6 +4,10 @@
 
 /* Nav */
 .landing-nav { background: #1A1A1A; padding: 1rem 0; }
+.landing-logo { height: 36px; width: auto; display: block; }
+.navbar-brand { display: flex; align-items: center; text-decoration: none; color: #fff !important; }
+.navbar-brand:hover { color: #ccc !important; }
+.navbar-brand span { font-family: 'Means', Georgia, serif; font-size: 1.25rem; font-weight: 700; }
 
 /* Hero */
 .hero-section { background: linear-gradient(135deg, #1034A6 0%, #0d2b85 100%); color: #fff; padding: 6rem 0 5rem; }

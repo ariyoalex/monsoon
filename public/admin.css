@@ -70,6 +70,9 @@ body { background: #F4F6FA; }
 .sidebar a { color: #ccc; text-decoration: none; display: block; padding: 0.5rem 1rem; border-radius: 0.25rem; }
 .sidebar a:hover, .sidebar a.active { background: #333; color: #fff; }
 .sidebar .brand { padding: 1rem; font-weight: 700; color: #fff; border-bottom: 1px solid #333; }
+.sidebar .brand a { display: flex; align-items: center; justify-content: center; padding: 0; }
+.sidebar .brand svg { width: 180px; height: auto; max-width: 100%; }
+.sidebar .brand:hover { background: transparent; }
 .content { padding: 2rem; }
 .card { border-color: #E1E5EC; }
 .btn-primary { background-color: #1034A6; border-color: #1034A6; }
