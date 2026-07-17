@@ -298,6 +298,10 @@ HTML;
 <a href="/manage/widgets" aria-label="Widgets">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -372,6 +376,10 @@ HTML;
 <a href="/manage/widgets" aria-label="Widgets">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -488,6 +496,10 @@ HTML;
 <a href="/manage/widgets" aria-label="Widgets">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -673,6 +685,10 @@ HTML;
 <a href="/manage/widgets" aria-label="Widgets">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -924,6 +940,10 @@ HTML;
 <a href="/manage/widgets" aria-label="Widgets">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -999,6 +1019,10 @@ HTML;
 <a href="/manage/widgets" aria-label="Widgets">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -1146,6 +1170,10 @@ HTML;
 <a href="/manage/widgets" aria-label="Widgets">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -1734,6 +1762,10 @@ HTML;
 <a href="/manage/settings" aria-label="Settings">Settings</a>
 <a href="/manage/customize" class="active" aria-label="Customize" aria-current="page">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -2101,6 +2133,10 @@ HTML;
 <a href="/manage/settings" aria-label="Settings">Settings</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" class="active" aria-label="Themes" aria-current="page">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>
@@ -2486,6 +2522,10 @@ HTML;
 <a href="/manage/widgets" class="active" aria-label="Widgets" aria-current="page">Widgets</a>
 <a href="/manage/customize" aria-label="Customize">Customize</a>
 <a href="/manage/themes" aria-label="Themes">Themes</a>
+<a href="/manage/seo" aria-label="SEO">SEO</a>
+<a href="/manage/forms" aria-label="Forms">Forms</a>
+<a href="/manage/security" aria-label="Security">Security</a>
+<a href="/manage/backup" aria-label="Backup">Backup</a>
 <a href="/manage/logout" class="mt-4 text-danger" aria-label="Log out">Log out</a>
 </nav>
 </div>

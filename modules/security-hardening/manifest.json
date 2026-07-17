@@ -1,0 +1,17 @@
+{
+    "name": "security-hardening",
+    "slug": "security-hardening",
+    "version": "1.0.0",
+    "description": "Login rate limiting, two-factor auth, audit logging, and file integrity checks",
+    "author": "Monsoon",
+    "permissions": ["auth.read", "auth.write", "user.read", "settings.write"],
+    "admin_routes": ["/manage/security"],
+    "routes": {},
+    "settings": {
+        "security_rate_limit_enabled": true,
+        "security_rate_limit_max": 5,
+        "security_rate_limit_window": 900,
+        "security_2fa_enabled": false,
+        "security_audit_retention_days": 90
+    }
+}

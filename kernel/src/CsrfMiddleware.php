@@ -20,7 +20,7 @@ final class CsrfMiddleware implements MiddlewareInterface
             $token = $request->input('_csrf_token') ?? $request->header('X-CSRF-Token');
             $sessionToken = Session::get('_csrf_token');
 
-            if ($token === '' || $sessionToken === '' || !hash_equals($sessionToken, $token)) {
+            if ($token === '' || $sessionToken === null || $sessionToken === '' || !hash_equals((string) $sessionToken, (string) $token)) {
                 if ($request->wantsJson()) {
                     return Response::error(403, 'CSRF token invalid or missing.');
                 }

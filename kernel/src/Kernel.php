@@ -51,6 +51,7 @@ final class Kernel
 
         if ($db !== null) {
             ApiRouter::register($this->router, $db->getConnection());
+            $this->moduleLoader->loadModules($db->getConnection());
         }
 
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';

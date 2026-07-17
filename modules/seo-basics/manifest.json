@@ -1,0 +1,18 @@
+{
+    "name": "seo-basics",
+    "slug": "seo-basics",
+    "version": "1.0.0",
+    "description": "SEO essentials: meta tags, Open Graph, sitemap, robots.txt, Schema.org",
+    "author": "Monsoon",
+    "permissions": ["content.read", "settings.write", "settings.read"],
+    "admin_routes": ["/manage/seo"],
+    "routes": {},
+    "hooks": ["theme:head", "theme:body:end"],
+    "settings": {
+        "seo_default_title": "{site_name} — {page_title}",
+        "seo_default_description": "",
+        "seo_og_enabled": true,
+        "seo_schema_enabled": true,
+        "seo_sitemap_enabled": true
+    }
+}

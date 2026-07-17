@@ -17,7 +17,7 @@ final class ModuleManifest
 
     public function __construct(array $data)
     {
-        $this->slug = $data['slug'] ?? '';
+        $this->slug = $data['slug'] ?? $data['name'] ?? '';
         $this->version = $data['version'] ?? '0.0.0';
         $this->capabilitiesRequired = $data['capabilities_required'] ?? [];
         $this->adminRoutes = $data['admin_routes'] ?? [];

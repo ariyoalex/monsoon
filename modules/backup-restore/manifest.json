@@ -1,0 +1,10 @@
+{
+    "name": "backup-restore",
+    "slug": "backup-restore",
+    "version": "1.0.0",
+    "description": "Full site backup and restore with database dump, file archive, and scheduled backups",
+    "author": "Monsoon",
+    "permissions": ["settings.read", "settings.write"],
+    "admin_routes": ["/manage/backup"],
+    "migrations": ["migration.sql"]
+}

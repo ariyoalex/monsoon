@@ -1,0 +1,20 @@
+{
+    "name": "forms",
+    "version": "1.0.0",
+    "description": "Drag-and-drop form builder with submissions, spam protection, and email notifications",
+    "author": "Monsoon",
+    "slug": "forms",
+    "capabilities_required": ["content.read", "content.write", "mail.send"],
+    "admin_routes": ["/manage/forms"],
+    "public_routes": [],
+    "migrations": ["migration.sql"],
+    "blocks": {
+        "form-embed": {
+            "name": "Form Embed",
+            "category": "widgets",
+            "defaultData": { "formId": "" },
+            "render": "renderFormEmbed",
+            "edit": "editFormEmbed"
+        }
+    }
+}

@@ -118,4 +118,67 @@ final class ModuleLoader
 
         return $this->modules[$slug]['manifest'];
     }
+
+    public function loadModules(\mysqli $db): void
+    {
+        $this->discover();
+
+        foreach ($this->modules as $slug => &$module) {
+            $modulePath = $module['path'];
+
+            $moduleClasses = [
+                'seo-basics' => ['SeoModule', 'SeoBasics'],
+                'forms' => ['FormsModule', 'Forms'],
+                'security-hardening' => ['SecurityModule', 'SecurityHardening'],
+                'backup-restore' => ['BackupModule', 'BackupRestore'],
+            ];
+
+            if (isset($moduleClasses[$slug])) {
+                [$className, $nsPart] = $moduleClasses[$slug];
+                $classFile = $modulePath . '/' . $className . '.php';
+
+                if (is_file($classFile)) {
+                    try {
+                        require_once $classFile;
+                        $fqcn = "Monsoon\\Modules\\{$nsPart}\\{$className}";
+                        $instance = new $fqcn($db);
+                        $instance->registerRoutes($this->router);
+                        $module['active'] = true;
+                    } catch (Throwable $e) {
+                        $module['active'] = false;
+                    }
+                }
+            }
+
+            $manifest = $module['manifest'];
+            foreach ($manifest->adminRoutes as $route) {
+                $adminFile = $modulePath . '/admin/' . basename($route) . '-page.php';
+                if (!is_file($adminFile)) {
+                    $adminFile = $modulePath . '/admin/' . basename($route) . '.php';
+                }
+                $adminPath = $adminFile;
+                $this->router->addRoute('GET', $route, function () use ($adminPath, $slug) {
+                    if (is_file($adminPath)) {
+                        ob_start();
+                        require $adminPath;
+                        $output = ob_get_clean();
+
+                        $funcName = null;
+                        if (str_contains(basename($adminPath), 'forms')) {
+                            $funcName = 'renderFormsPage';
+                        } elseif (str_contains(basename($adminPath), 'backup')) {
+                            $funcName = 'renderBackupPage';
+                        }
+
+                        if ($funcName && function_exists($funcName)) {
+                            $output = $funcName();
+                        }
+
+                        return Response::html($output);
+                    }
+                    return Response::html("<h1>Module: $slug</h1>");
+                });
+            }
+        }
+    }
 }

@@ -13,7 +13,13 @@
         "psr-4": {
             "Monsoon\\Kernel\\": "kernel/src/",
             "Monsoon\\Modules\\": "modules/"
-        }
+        },
+        "classmap": [
+            "modules/seo-basics/",
+            "modules/forms/",
+            "modules/security-hardening/",
+            "modules/backup-restore/"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
