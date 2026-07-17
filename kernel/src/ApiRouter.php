@@ -6,9 +6,9 @@ namespace Monsoon\Kernel;
 
 final class ApiRouter
 {
-    public static function register(Router $router, \mysqli $db): void
+    public static function register(Router $router, \mysqli $db, ?PageCache $pageCache = null): void
     {
-        $contentService = new ContentService($db);
+        $contentService = new ContentService($db, $pageCache);
         $taxonomyService = new TaxonomyService($db);
 
         // ==================== CONTENT ====================

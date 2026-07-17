@@ -7,13 +7,27 @@ namespace Monsoon\Kernel;
 final class ContentService
 {
     private \mysqli $db;
+    private ?PageCache $pageCache = null;
 
     private const VALID_STATUSES = ['draft', 'review', 'approved', 'published', 'archived'];
     private const VALID_TYPES = ['page', 'post'];
 
-    public function __construct(\mysqli $db)
+    public function __construct(\mysqli $db, ?PageCache $pageCache = null)
     {
         $this->db = $db;
+        $this->pageCache = $pageCache;
+    }
+
+    public function setPageCache(PageCache $cache): void
+    {
+        $this->pageCache = $pageCache;
+    }
+
+    private function invalidateCache(): void
+    {
+        if ($this->pageCache !== null) {
+            $this->pageCache->purgeAll();
+        }
     }
 
     public function create(array $data): array
@@ -43,6 +57,7 @@ final class ContentService
         $stmt->close();
 
         $this->createRevision($id);
+        $this->invalidateCache();
 
         return $this->findById($id);
     }
@@ -200,6 +215,7 @@ final class ContentService
         $stmt->close();
 
         $this->createRevision($id);
+        $this->invalidateCache();
 
         return $this->findById($id);
     }
@@ -211,6 +227,7 @@ final class ContentService
         $stmt->execute();
         $affected = $stmt->affected_rows;
         $stmt->close();
+        $this->invalidateCache();
         return $affected > 0;
     }
 
