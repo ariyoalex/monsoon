@@ -453,7 +453,7 @@ const BlockEditor = {
 
         // ── Close add menu on outside click ──
         document.addEventListener('click', e => {
-            const menu = root.querySelector('.block-editor-add-menu');
+            const menu = document.querySelector('.block-editor-add-menu');
             if (menu && !menu.contains(e.target) && !e.target.closest('.block-add-btn')) {
                 this._closeAddMenu();
             }
@@ -596,6 +596,16 @@ const BlockEditor = {
 
         renderMenuItems();
         searchInput.addEventListener('input', () => renderMenuItems(searchInput.value));
+
+        menu.addEventListener('click', e => {
+            const btn = e.target.closest('.block-type-btn');
+            if (btn) {
+                const type = btn.dataset.blockType;
+                if (type) this.addBlock(type, this.selectedBlockId);
+                this._closeAddMenu();
+            }
+        });
+
         searchInput.focus();
 
         document.body.appendChild(menu);
